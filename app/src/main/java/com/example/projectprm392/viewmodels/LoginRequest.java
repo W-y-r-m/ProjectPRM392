@@ -1,4 +1,4 @@
-package com.example.projectprm392.models;
+package com.example.projectprm392.viewmodels;
 
 public class LoginRequest {
     private String email;

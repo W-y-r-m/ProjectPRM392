@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.UserEntity;
-import com.example.projectprm392.models.LoginRequest;
-import com.example.projectprm392.models.LoginResponse;
+import com.example.projectprm392.viewmodels.LoginRequest;
+import com.example.projectprm392.viewmodels.LoginResponse;
 import com.example.projectprm392.models.User;
 
 import java.util.UUID;
