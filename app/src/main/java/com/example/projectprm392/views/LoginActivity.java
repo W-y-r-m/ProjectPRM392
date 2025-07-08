@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.projectprm392.MainActivity;
 import com.example.projectprm392.R;
+import com.example.projectprm392.activities.HomeActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.viewmodels.LoginResponse;
 import com.google.android.material.button.MaterialButton;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         
         // Check if user is already logged in
         if (loginController.isLoggedIn()) {
-            navigateToMainActivity();
+            navigateToHomeActivity();
             return;
         }
         
@@ -105,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     showLoading(false);
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    navigateToMainActivity();
+                    navigateToHomeActivity();
                 });
             }
 
@@ -124,8 +125,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setEnabled(!show);
     }
 
-    private void navigateToMainActivity() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+    private void navigateToHomeActivity() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
