@@ -5,9 +5,10 @@ import java.util.UUID;
 
 public class User {
     private UUID userId;
+    private String phoneNumber;
+    private String fullName;
     private String email;
     private String password;
-    private String fullName;
     private Boolean gender;
     private String role;
     private String levelOfViolation;
@@ -15,6 +16,7 @@ public class User {
     private Integer postQuota;
     private Double currentLatitude;
     private Double currentLongitude;
+    private Boolean otpVerified;
     private Date createdAt;
     private Boolean isActive;
 
@@ -25,10 +27,19 @@ public class User {
         this.isActive = true;
         this.levelOfViolation = "NONE";
         this.postQuota = 10; // Default post quota
+        this.otpVerified = false;
     }
 
-    public User(String email, String password, String fullName, String role) {
+    public User(String phoneNumber, String fullName, String role) {
         this();
+        this.phoneNumber = phoneNumber;
+        this.fullName = fullName;
+        this.role = role;
+    }
+
+    public User(String phoneNumber, String email, String password, String fullName, String role) {
+        this();
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
@@ -42,6 +53,14 @@ public class User {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {
@@ -122,6 +141,14 @@ public class User {
 
     public void setCurrentLongitude(Double currentLongitude) {
         this.currentLongitude = currentLongitude;
+    }
+
+    public Boolean getOtpVerified() {
+        return otpVerified;
+    }
+
+    public void setOtpVerified(Boolean otpVerified) {
+        this.otpVerified = otpVerified;
     }
 
     public Date getCreatedAt() {

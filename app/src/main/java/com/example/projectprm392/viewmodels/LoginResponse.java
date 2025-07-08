@@ -1,4 +1,6 @@
-package com.example.projectprm392.models;
+package com.example.projectprm392.viewmodels;
+
+import com.example.projectprm392.models.User;
 
 public class LoginResponse {
     private boolean success;

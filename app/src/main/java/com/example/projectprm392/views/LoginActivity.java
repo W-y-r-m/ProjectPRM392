@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projectprm392.MainActivity;
 import com.example.projectprm392.R;
 import com.example.projectprm392.controllers.LoginController;
-import com.example.projectprm392.models.LoginResponse;
+import com.example.projectprm392.viewmodels.LoginResponse;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;

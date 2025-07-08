@@ -6,8 +6,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.example.projectprm392.api.DatabaseApiService;
-import com.example.projectprm392.models.LoginRequest;
-import com.example.projectprm392.models.LoginResponse;
+import com.example.projectprm392.viewmodels.LoginRequest;
+import com.example.projectprm392.viewmodels.LoginResponse;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
 import com.example.projectprm392.utils.ValidationUtils;
