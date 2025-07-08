@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.projectprm392.activities.HomeActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.views.LoginActivity;
@@ -42,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         setupController();
         checkLoginStatus();
+        
+        // Redirect to HomeActivity for better user experience
+        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void initViews() {
