@@ -5,32 +5,46 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectprm392.R;
-import com.example.projectprm392.models.Job;
+import com.example.projectprm392.database.JobEntity;
+import com.example.projectprm392.database.UserEntity;
+import com.example.projectprm392.database.DatabaseHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Date;
 
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
-    private List<Job> jobs;
+    private List<JobEntity> jobs;
     private OnJobClickListener onJobClickListener;
     private Location userLocation;
+    private DatabaseHelper databaseHelper;
 
     public interface OnJobClickListener {
-        void onJobClick(Job job);
+        void onJobClick(JobEntity job);
+        void onContactClick(JobEntity job);
+        void onSaveClick(JobEntity job);
     }
 
-    public JobAdapter(List<Job> jobs, OnJobClickListener listener) {
+    public JobAdapter(List<JobEntity> jobs, OnJobClickListener listener, DatabaseHelper databaseHelper) {
         this.jobs = jobs;
         this.onJobClickListener = listener;
+        this.databaseHelper = databaseHelper;
+    }
+
+    public void updateJobs(List<JobEntity> newJobs) {
+        this.jobs = newJobs;
+        notifyDataSetChanged();
     }
 
     public void setUserLocation(Location location) {
@@ -48,7 +62,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull JobViewHolder holder, int position) {
-        Job job = jobs.get(position);
+        JobEntity job = jobs.get(position);
         holder.bind(job);
     }
 
@@ -65,7 +79,11 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
         private TextView tvLocation;
         private TextView tvNeededAmount;
         private TextView tvWorkingTime;
-        private MaterialButton btnApply;
+        private TextView tvCompanyName;
+        private TextView tvPostTime;
+        private ImageView btnView;
+        private MaterialButton btnSave;
+        private MaterialButton btnContact;
 
         public JobViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,17 +94,32 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvNeededAmount = itemView.findViewById(R.id.tvNeededAmount);
             tvWorkingTime = itemView.findViewById(R.id.tvWorkingTime);
-            btnApply = itemView.findViewById(R.id.btnApply);
+            tvCompanyName = itemView.findViewById(R.id.tvCompanyName);
+            tvPostTime = itemView.findViewById(R.id.tvPostTime);
+            btnView = itemView.findViewById(R.id.btnView);
+            btnSave = itemView.findViewById(R.id.btnSave);
+            btnContact = itemView.findViewById(R.id.btnContact);
         }
 
-        public void bind(Job job) {
+        public void bind(JobEntity job) {
             tvTitle.setText(job.getTitle());
             tvDescription.setText(job.getDescription());
             
+            // Get company info from database
+            if (databaseHelper != null) {
+                UserEntity user = databaseHelper.getUserById(job.getUserId());
+                if (user != null) {
+                    tvCompanyName.setText(user.getFullName());
+                } else {
+                    tvCompanyName.setText("Không rõ");
+                }
+            }
+            
+            // Post time (simplified)
+            tvPostTime.setText("Vài giờ trước");
+            
             // Format salary
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-            String salaryText = currencyFormat.format(job.getSalary()) + "/" + getSalaryUnitText(job.getSalaryUnit());
-            tvSalary.setText(salaryText);
+            tvSalary.setText(job.getSalary());
             
             // Location with real distance calculation
             if (job.getLocationLatitude() != null && job.getLocationLongitude() != null && userLocation != null) {
@@ -97,15 +130,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                 float distance = userLocation.distanceTo(jobLocation) / 1000; // Convert to km
                 tvLocation.setText(String.format("Cách bạn ~%.1fkm", distance));
             } else {
-                tvLocation.setText("Vị trí chưa xác định");
+                tvLocation.setText(job.getLocationName() != null ? job.getLocationName() : "Vị trí chưa xác định");
             }
             
             // Needed amount
             tvNeededAmount.setText("Cần " + job.getNeededAmount() + " người");
             
             // Working time
-            if (job.getStartTime() != null && job.getEndTime() != null) {
-                tvWorkingTime.setText(job.getStartTime() + " - " + job.getEndTime());
+            if (job.getWorkingTime() != null && !job.getWorkingTime().isEmpty()) {
+                tvWorkingTime.setText(job.getWorkingTime());
             } else {
                 tvWorkingTime.setText("Linh hoạt");
             }
@@ -117,25 +150,26 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
                 }
             });
             
-            // Apply button click listener
-            btnApply.setOnClickListener(v -> {
-                // TODO: Implement apply logic
-                btnApply.setText("Đã ứng tuyển");
-                btnApply.setEnabled(false);
+            // View button click listener
+            btnView.setOnClickListener(v -> {
+                if (onJobClickListener != null) {
+                    onJobClickListener.onJobClick(job);
+                }
             });
-        }
-        
-        private String getSalaryUnitText(Job.SalaryUnit unit) {
-            switch (unit) {
-                case HOUR:
-                    return "giờ";
-                case DAY:
-                    return "ngày";
-                case PACKAGE:
-                    return "gói";
-                default:
-                    return "giờ";
-            }
+            
+            // Save button click listener
+            btnSave.setOnClickListener(v -> {
+                if (onJobClickListener != null) {
+                    onJobClickListener.onSaveClick(job);
+                }
+            });
+            
+            // Contact button click listener
+            btnContact.setOnClickListener(v -> {
+                if (onJobClickListener != null) {
+                    onJobClickListener.onContactClick(job);
+                }
+            });
         }
     }
 }

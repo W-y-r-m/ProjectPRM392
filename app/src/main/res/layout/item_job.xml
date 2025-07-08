@@ -4,9 +4,14 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@android:color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,151 +19,268 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Title -->
+        <!-- Header with Company Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical">
+
+            <!-- Company Logo -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                app:cardCornerRadius="26dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#F0F2F5">
+
+                <ImageView
+                    android:id="@+id/ivCompanyLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:scaleType="centerCrop"
+                    android:padding="10dp"
+                    app:tint="#4267B2" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Company and Job Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tên công ty"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#1F2937"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tvPostTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2 giờ trước"
+                    android:textSize="12sp"
+                    android:textColor="#6B7280"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+
+            <!-- View Button -->
+            <ImageView
+                android:id="@+id/btnView"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_view"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:contentDescription="Xem chi tiết"
+                app:tint="#4267B2" />
+
+        </LinearLayout>
+
+        <!-- Job Title -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tiêu đề công việc"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="#1F2937"
             android:layout_marginBottom="8dp" />
 
-        <!-- Description -->
+        <!-- Job Description -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mô tả công việc..."
+            android:text="Mô tả công việc chi tiết..."
             android:textSize="14sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="#4B5563"
             android:maxLines="2"
             android:ellipsize="end"
-            android:layout_marginBottom="12dp" />
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="16dp" />
 
-        <!-- Job Info Row -->
+        <!-- Job Details Grid -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:orientation="vertical"
+            android:background="@drawable/search_background"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
 
-            <!-- Salary -->
+            <!-- First Row: Salary and Location -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_marginBottom="10dp">
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_money"
-                    android:layout_marginEnd="4dp" />
-
-                <TextView
-                    android:id="@+id/tvSalary"
-                    android:layout_width="wrap_content"
+                <!-- Salary -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="150,000đ/giờ"
-                    android:textSize="14sp"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_money"
+                        android:layout_marginEnd="6dp"
+                        app:tint="#10B981" />
+
+                    <TextView
+                        android:id="@+id/tvSalary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="150,000đ/giờ"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#10B981" />
+
+                </LinearLayout>
+
+                <!-- Location -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|end">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_location"
+                        android:layout_marginEnd="6dp"
+                        app:tint="#EF4444" />
+
+                    <TextView
+                        android:id="@+id/tvLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cách 2.5km"
+                        android:textSize="12sp"
+                        android:textColor="#6B7280"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Location -->
+            <!-- Second Row: People Needed and Working Time -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_location"
-                    android:layout_marginEnd="4dp" />
-
-                <TextView
-                    android:id="@+id/tvLocation"
-                    android:layout_width="wrap_content"
+                <!-- Needed Amount -->
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Cách 2.5km"
-                    android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_people"
+                        android:layout_marginEnd="6dp"
+                        app:tint="#8B5CF6" />
+
+                    <TextView
+                        android:id="@+id/tvNeededAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cần 3 người"
+                        android:textSize="12sp"
+                        android:textColor="#6B7280" />
+
+                </LinearLayout>
+
+                <!-- Working Time -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|end">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_time"
+                        android:layout_marginEnd="6dp"
+                        app:tint="#F59E0B" />
+
+                    <TextView
+                        android:id="@+id/tvWorkingTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="8:00 - 17:00"
+                        android:textSize="12sp"
+                        android:textColor="#6B7280" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Additional Info Row -->
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:orientation="horizontal">
 
-            <!-- Needed Amount -->
-            <LinearLayout
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_marginEnd="8dp"
+                android:text="Lưu"
+                android:textSize="13sp"
+                android:textColor="#6B7280"
+                app:strokeColor="#D1D5DB"
+                app:cornerRadius="20dp"
+                app:icon="@android:drawable/ic_menu_save"
+                app:iconSize="18dp"
+                app:iconTint="#6B7280" />
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_people"
-                    android:layout_marginEnd="4dp" />
-
-                <TextView
-                    android:id="@+id/tvNeededAmount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cần 3 người"
-                    android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-            </LinearLayout>
-
-            <!-- Working Time -->
-            <LinearLayout
+            <!-- Contact Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContact"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_time"
-                    android:layout_marginEnd="4dp" />
-
-                <TextView
-                    android:id="@+id/tvWorkingTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="8:00 - 17:00"
-                    android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-            </LinearLayout>
+                android:layout_marginStart="8dp"
+                android:text="Liên hệ"
+                android:textSize="13sp"
+                android:backgroundTint="#4267B2"
+                app:cornerRadius="20dp" />
 
         </LinearLayout>
-
-        <!-- Apply Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnApply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ứng tuyển"
-            app:cornerRadius="8dp" />
 
     </LinearLayout>
 

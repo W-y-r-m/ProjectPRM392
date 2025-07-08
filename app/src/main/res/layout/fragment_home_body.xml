@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F2F5">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -12,77 +13,410 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
+
+            <!-- Quick Action Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_menu_add"
+                        android:background="@drawable/circle_background"
+                        android:backgroundTint="#4267B2"
+                        android:padding="8dp"
+                        android:layout_marginEnd="12dp"
+                        android:tint="@android:color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Đăng tin tuyển dụng"
+                        android:textSize="16sp"
+                        android:textColor="#333333" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPostJob"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp" 
+                    android:minWidth="64dp"
+                    android:minHeight="48dp"
+                    android:text="Đăng tin"
+                    android:textSize="12sp"
+                    android:backgroundTint="#4267B2"
+                    app:cornerRadius="18dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Quick Filters -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@android:color/white">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroupFilters"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:singleLine="true"
-                    app:chipSpacingHorizontal="8dp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnShowFilters"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bộ lọc"
-                    app:icon="@drawable/ic_filter"
-                    app:iconSize="16dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
 
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🔍 Bộ lọc nhanh"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#1F2937" />
+
+                        <ImageView
+                            android:id="@+id/ivExpandFilters"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_menu_down"
+                            android:tint="#6B7280"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:padding="4dp" />
+
+                    </LinearLayout>
+
+                    <!-- Basic Filters Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipNearby"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gần nhất"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="8dp"
+                            app:chipBackgroundColor="#E3F2FD"
+                            app:chipStrokeColor="#2196F3"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="16dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipHighSalary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lương cao"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="8dp"
+                            app:chipBackgroundColor="#E8F5E8"
+                            app:chipStrokeColor="#4CAF50"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="16dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipNewJob"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mới nhất"
+                            android:textSize="12sp"
+                            app:chipBackgroundColor="#FFF3E0"
+                            app:chipStrokeColor="#FF9800"
+                            app:chipStrokeWidth="1dp"
+                            app:chipCornerRadius="16dp" />
+
+                    </LinearLayout>
+
+                    <!-- Expandable Filters -->
+                    <LinearLayout
+                        android:id="@+id/layoutExpandableFilters"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <!-- Job Type Filters -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Loại hình công việc"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#374151"
+                            android:layout_marginBottom="8dp" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupJobType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            app:singleLine="false"
+                            app:chipSpacingHorizontal="8dp"
+                            app:chipSpacingVertical="4dp">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipPartTime"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bán thời gian"
+                                android:textSize="12sp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipFullTime"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Toàn thời gian"
+                                android:textSize="12sp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipFreelance"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Freelance"
+                                android:textSize="12sp" />
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                        <!-- Experience Level Filters -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Kinh nghiệm"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#374151"
+                            android:layout_marginBottom="8dp" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupExperience"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleLine="false"
+                            app:chipSpacingHorizontal="8dp"
+                            app:chipSpacingVertical="4dp">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipEntry"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Không cần kinh nghiệm"
+                                android:textSize="12sp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipJunior"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1-2 năm"
+                                android:textSize="12sp" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipExperienced"
+                                style="@style/Widget.MaterialComponents.Chip.Filter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Có kinh nghiệm"
+                                android:textSize="12sp" />
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </LinearLayout>
+
+                    <!-- Apply Filters Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnApplyFilters"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Áp dụng bộ lọc"
+                        android:textSize="14sp"
+                        android:backgroundTint="#4267B2"
+                        app:cornerRadius="22dp"
+                        app:icon="@drawable/ic_filter"
+                        app:iconSize="18dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Recommended Jobs Section -->
-            <TextView
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Công việc dành cho bạn"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRecommendedJobs"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎯 Việc làm dành cho bạn"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvRecommendedJobs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- All Jobs Section -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginBottom="24dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🌟 Tất cả việc làm"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#333333" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnViewAll"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:minHeight="48dp"
+                            android:minWidth="64dp"
+                            android:text="Xem tất cả"
+                            android:textSize="12sp"
+                            android:textColor="#4267B2" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvAllJobs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- Nearby Jobs Section -->
-            <TextView
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Việc làm gần bạn"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvNearbyJobs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="📍 Việc làm gần bạn"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvNearbyJobs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Loading indicator -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Action Button for Post Job -->
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPostJob"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:contentDescription="Đăng bài tuyển dụng"
-        app:tint="@android:color/white" />
+        android:src="@android:drawable/ic_menu_add"
+        android:tint="@android:color/white"
+        android:backgroundTint="#4267B2"
+        android:contentDescription="Đăng bài tuyển dụng" />
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

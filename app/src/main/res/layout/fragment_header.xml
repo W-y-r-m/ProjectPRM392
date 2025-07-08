@@ -2,66 +2,137 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
+    android:background="#4267B2"
     android:orientation="horizontal"
-    android:padding="16dp"
-    android:background="?attr/colorPrimary"
-    android:elevation="4dp">
+    android:gravity="center_vertical"
+    android:paddingHorizontal="16dp"
+    android:elevation="8dp">
 
     <!-- Logo -->
-    <ImageView
-        android:id="@+id/ivLogo"
+    <androidx.cardview.widget.CardView
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_launcher_foreground"
-        android:contentDescription="Logo Việc làm gần tôi" />
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp">
 
-    <!-- App Title -->
-    <TextView
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_launcher_foreground"
+            android:background="@android:color/white"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:contentDescription="Logo" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Search Bar -->
+    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="8dp"
-        android:text="Việc làm gần tôi"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/white">
 
-    <!-- Search View -->
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/search_background"
-        app:queryHint="Tìm kiếm công việc..."
-        app:iconifiedByDefault="false" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:layout_marginEnd="8dp"
+                android:alpha="0.6"
+                app:tint="#666666" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                app:queryHint="Tìm việc làm..."
+                app:iconifiedByDefault="false"
+                app:searchIcon="@null"
+                app:submitBackground="@android:color/transparent"
+                app:queryBackground="@android:color/transparent" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Notification Icon -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="12dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <ImageView
+            android:id="@+id/ivNotification"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_popup_reminder"
+            android:layout_gravity="center"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#4267B2" />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Profile/Login Button -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <ImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerCrop"
+            android:padding="8dp"
+            app:tint="#4267B2" />
+
+    </androidx.cardview.widget.CardView>
 
     <!-- Login Button (when not logged in) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="12dp"
         android:text="Đăng nhập"
         android:textColor="@android:color/white"
+        android:textSize="12sp"
         app:strokeColor="@android:color/white"
+        app:strokeWidth="1dp"
+        app:cornerRadius="16dp"
         android:visibility="gone" />
 
     <!-- User Info (when logged in) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tvUserName"
@@ -69,19 +140,20 @@
             android:layout_height="wrap_content"
             android:text="Xin chào, User"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:visibility="gone" />
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
         <ImageView
             android:id="@+id/ivUserMenu"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_menu_down"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="4dp"
+            android:src="@android:drawable/arrow_down_float"
             android:contentDescription="Menu người dùng"
-            android:visibility="gone"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
+            android:padding="2dp"
+            app:tint="@android:color/white" />
 
     </LinearLayout>
 

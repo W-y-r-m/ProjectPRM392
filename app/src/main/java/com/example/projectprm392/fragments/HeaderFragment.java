@@ -26,6 +26,8 @@ public class HeaderFragment extends Fragment {
 
     private ImageView ivLogo;
     private SearchView searchView;
+    private ImageView ivNotification;
+    private ImageView ivProfile;
     private MaterialButton btnLogin;
     private TextView tvUserName;
     private ImageView ivUserMenu;
@@ -58,6 +60,8 @@ public class HeaderFragment extends Fragment {
     private void initViews(View view) {
         ivLogo = view.findViewById(R.id.ivLogo);
         searchView = view.findViewById(R.id.searchView);
+        ivNotification = view.findViewById(R.id.ivNotification);
+        ivProfile = view.findViewById(R.id.ivProfile);
         btnLogin = view.findViewById(R.id.btnLogin);
         tvUserName = view.findViewById(R.id.tvUserName);
         ivUserMenu = view.findViewById(R.id.ivUserMenu);
@@ -85,6 +89,21 @@ public class HeaderFragment extends Fragment {
             }
         });
 
+        // Notification click
+        ivNotification.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Thông báo", Toast.LENGTH_SHORT).show();
+        });
+
+        // Profile click
+        ivProfile.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                showUserMenu(v);
+            } else {
+                Intent intent = new Intent(requireContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // Login button
         btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), LoginActivity.class);
@@ -92,7 +111,9 @@ public class HeaderFragment extends Fragment {
         });
 
         // User menu
-        ivUserMenu.setOnClickListener(this::showUserMenu);
+        if (ivUserMenu != null) {
+            ivUserMenu.setOnClickListener(this::showUserMenu);
+        }
     }
 
     private void showUserMenu(View view) {
