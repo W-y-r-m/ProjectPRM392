@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">ProjectPRM392</string>
+    <string name="app_name">Work Hub</string>
+    <string name="login_title">Đăng nhập</string>
+    <string name="register_title">Đăng ký</string>
+    <string name="phone_number_hint">Số điện thoại</string>
+    <string name="email_hint">Email</string>
+    <string name="otp_hint">Mã OTP</string>
+    <string name="full_name_hint">Họ và tên</string>
+    <string name="description_hint">Mô tả bản thân</string>
+    <string name="login_button">Đăng nhập</string>
+    <string name="register_button">Đăng ký</string>
+    <string name="verify_otp_button">Xác thực OTP</string>
+    <string name="resend_otp_button">Gửi lại mã OTP</string>
+    <string name="already_have_account">Đã có tài khoản? Đăng nhập ngay</string>
+    <string name="dont_have_account">Chưa có tài khoản? Đăng ký ngay</string>
+    <string name="logout">Đăng xuất</string>
 </resources>
