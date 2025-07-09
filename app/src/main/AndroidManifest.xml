@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <!-- Internet permission for API calls -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Location permissions (for future use) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Location permissions (for future use) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -43,6 +46,18 @@
             android:name=".views.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- PostHistoryActivity -->
+        <activity
+            android:name=".activities.PostHistoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392">
+            <!-- <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter> -->
+        </activity>
     </application>
 
 </manifest>
