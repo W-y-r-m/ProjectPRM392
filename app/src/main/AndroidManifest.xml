@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Internet permission for API calls -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
-    <!-- Location permissions (for future use) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Location permissions (for future use) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -21,35 +18,31 @@
         android:theme="@style/Theme.ProjectPRM392"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        
+        <activity
+            android:name=".activities.ApplicationActivity"
+            android:exported="false" />
         <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        
-        <!-- HomeActivity -->
+        </activity> <!-- HomeActivity -->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false"
-            android:theme="@style/Theme.ProjectPRM392" />
-        
-        <!-- LoginActivity -->
+            android:theme="@style/Theme.ProjectPRM392" /> <!-- LoginActivity -->
         <activity
             android:name=".views.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.ProjectPRM392" />
-        
-        <!-- RegisterActivity -->
+            android:theme="@style/Theme.ProjectPRM392" /> <!-- RegisterActivity -->
         <activity
             android:name=".views.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
-        
     </application>
 
 </manifest>
