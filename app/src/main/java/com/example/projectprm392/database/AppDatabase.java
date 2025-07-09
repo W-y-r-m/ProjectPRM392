@@ -13,7 +13,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract JobDao jobDao();
     public abstract ApplicationDao applicationDao();
     public abstract PostHistoryDao postHistoryDao();
-    
+
     private static volatile AppDatabase INSTANCE;
     
     public static AppDatabase getDatabase(final Context context) {
