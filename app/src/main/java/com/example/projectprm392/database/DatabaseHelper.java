@@ -14,12 +14,14 @@ public class DatabaseHelper {
     private AppDatabase database;
     private UserDao userDao;
     private JobDao jobDao;
+    private ApplicationDao applicationDao;
     private ExecutorService executor;
 
     public DatabaseHelper(Context context) {
         database = AppDatabase.getDatabase(context);
         userDao = database.userDao();
         jobDao = database.jobDao();
+        applicationDao = database.applicationDao();
         executor = Executors.newFixedThreadPool(4);
     }
 
@@ -342,6 +344,79 @@ public class DatabaseHelper {
     public void deleteJob(JobEntity job) {
         jobDao.delete(job);
     }
+
+    // Application methods
+    public List<ApplicationEntity> getAllApplications() {
+        return applicationDao.getAllApplications();
+    }
+
+    public List<ApplicationEntity> getApplicationsByUserId(int userId) {
+        return applicationDao.getApplicationsByUserId(userId);
+    }
+
+    public List<ApplicationEntity> getApplicationsByJobId(int jobId) {
+        return applicationDao.getApplicationsByJobId(jobId);
+    }
+
+    public List<ApplicationEntity> getApplicationsByStatus(String status) {
+        return applicationDao.getApplicationsByStatus(status);
+    }
+
+    public ApplicationEntity getApplicationById(int id) {
+        return applicationDao.getApplicationById(id);
+    }
+
+    public void insertApplication(ApplicationEntity application) {
+        applicationDao.insert(application);
+    }
+
+    public void updateApplication(ApplicationEntity application) {
+        applicationDao.update(application);
+    }
+
+    public void deleteApplication(ApplicationEntity application) {
+        applicationDao.delete(application);
+    }
+
+    public void createSampleApplications() {
+        List<UserEntity> users = getUsersByRole("WORKER");
+        List<JobEntity> jobs = getAllJobs();
+
+        if (!users.isEmpty() && !jobs.isEmpty()) {
+            UserEntity worker1 = users.get(0);
+            UserEntity worker2 = users.get(1);
+            UserEntity worker3 = users.get(2);
+
+            // Worker 1 ứng tuyển 2 job
+            insertApplication(createApplication(worker1, jobs.get(0), "Em có kinh nghiệm phục vụ bàn."));
+            insertApplication(createApplication(worker1, jobs.get(1), "Em rất đam mê pha chế đồ uống."));
+
+            // Worker 2 ứng tuyển 1 job
+            insertApplication(createApplication(worker2, jobs.get(2), "Em có thể giao hàng vào cuối tuần."));
+
+            // Worker 3 ứng tuyển 2 job
+            insertApplication(createApplication(worker3, jobs.get(3), "Em từng làm đóng gói 6 tháng."));
+            insertApplication(createApplication(worker3, jobs.get(4), "Em thích làm việc với khách hàng."));
+        }
+    }
+
+    private ApplicationEntity createApplication(UserEntity user, JobEntity job, String message) {
+        String applicationId = UUID.randomUUID().toString();
+        long now = new Date().getTime();
+
+        return new ApplicationEntity(
+                0, // ID auto-generate
+                applicationId,
+                job.getId(),
+                user.getId(),
+                message,
+                null,
+                "pending",
+                null,
+                now
+        );
+    }
+
 
     public void close() {
         if (executor != null) {

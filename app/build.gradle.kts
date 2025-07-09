@@ -59,6 +59,9 @@ dependencies {
     
     // Permissions
     implementation("com.karumi:dexter:6.2.3")
+
+    // CardView cho giao diện bo góc, bóng đổ
+    implementation("androidx.cardview:cardview:1.0.0")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

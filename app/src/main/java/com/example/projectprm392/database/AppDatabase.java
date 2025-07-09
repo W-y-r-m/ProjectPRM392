@@ -6,11 +6,13 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
 
-@Database(entities = {UserEntity.class, JobEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {UserEntity.class, JobEntity.class, ApplicationEntity.class, PostHistoryEntity.class}, version = 4, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract JobDao jobDao();
+    public abstract ApplicationDao applicationDao();
+    public abstract PostHistoryDao postHistoryDao();
     
     private static volatile AppDatabase INSTANCE;
     
