@@ -30,7 +30,8 @@ public class ApplicationActivity extends AppCompatActivity {
 
         // Khởi tạo helper
         databaseHelper = new DatabaseHelper(this);
-        databaseHelper.createSampleApplications();
+        databaseHelper.initializeSampleData();
+
 
         // Khởi tạo nút Back
         btnBack = findViewById(R.id.btnBack);
