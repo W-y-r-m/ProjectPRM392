@@ -13,3 +13,19 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Email configuration (security)
+email_config.properties
+app/src/main/assets/email_config.properties
+
+# Build outputs
+**/build/
+**/outputs/
+app/build/
+build/
+.externalNativeBuild/
+.cxx/
+
+# IDE files
+.vscode/
+.idea/

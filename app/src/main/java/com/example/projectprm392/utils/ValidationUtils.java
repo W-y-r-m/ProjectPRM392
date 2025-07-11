@@ -2,6 +2,8 @@ package com.example.projectprm392.utils;
 
 import android.text.TextUtils;
 import android.util.Patterns;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ValidationUtils {
     
@@ -55,5 +57,29 @@ public class ValidationUtils {
             return "Họ và tên phải có ít nhất 2 ký tự";
         }
         return null;
+    }
+    
+    /**
+     * Hash password using SHA-256
+     */
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes("UTF-8"));
+            StringBuilder hexString = new StringBuilder();
+            
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
+            // Fallback: return password as is (not recommended for production)
+            return password;
+        }
     }
 }

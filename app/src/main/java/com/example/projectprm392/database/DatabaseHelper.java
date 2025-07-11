@@ -78,17 +78,41 @@ public class DatabaseHelper {
         return userDao.getByRole(role);
     }
 
+    /**
+     * Update password for user by email
+     */
+    public boolean updatePassword(String email, String hashedPassword) {
+        try {
+            int rowsAffected = userDao.updatePassword(email, hashedPassword);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Clear verification code for user by email
+     */
+    public void clearVerificationCode(String email) {
+        try {
+            userDao.clearVerificationCode(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Convert methods
     public UserEntity convertUserToEntity(User user) {
-        if (user == null) return null;
-
+        if (user == null)
+            return null;
         try {
             UserEntity entity = new UserEntity();
             entity.setUserId(user.getUserId() != null ? user.getUserId().toString() : UUID.randomUUID().toString());
             entity.setEmail(user.getEmail());
+            entity.setPhoneNumber(user.getPhoneNumber());
             entity.setPassword(user.getPassword());
             entity.setFullName(user.getFullName());
-            entity.setPhoneNumber(user.getPhoneNumber()); // This can be null and it's OK
             entity.setGender(user.getGender());
             entity.setRole(user.getRole());
             entity.setLevelOfViolation(user.getLevelOfViolation());
@@ -98,6 +122,9 @@ public class DatabaseHelper {
             entity.setCurrentLongitude(user.getCurrentLongitude());
             entity.setCreatedAt(user.getCreatedAt());
             entity.setIsActive(user.getIsActive());
+            entity.setIsVerified(user.isVerified());
+            entity.setVerificationCode(user.getVerificationCode());
+            entity.setVerificationCodeExpiresAt(user.getVerificationCodeExpiresAt());
 
             return entity;
         } catch (Exception e) {
@@ -108,17 +135,17 @@ public class DatabaseHelper {
     }
 
     public User convertEntityToUser(UserEntity entity) {
-        if (entity == null) return null;
-
+        if (entity == null)
+            return null;
         try {
             User user = new User();
             user.setUserId(UUID.fromString(entity.getUserId()));
             user.setEmail(entity.getEmail());
             user.setPassword(entity.getPassword());
             user.setFullName(entity.getFullName());
-            user.setPhoneNumber(entity.getPhoneNumber()); // This can be null and it's OK
             user.setGender(entity.getGender());
             user.setRole(entity.getRole());
+            user.setPhoneNumber(entity.getPhoneNumber());
             user.setLevelOfViolation(entity.getLevelOfViolation());
             user.setDescription(entity.getDescription());
             user.setPostQuota(entity.getPostQuota());
@@ -126,6 +153,9 @@ public class DatabaseHelper {
             user.setCurrentLongitude(entity.getCurrentLongitude());
             user.setCreatedAt(entity.getCreatedAt());
             user.setIsActive(entity.getIsActive());
+            user.setVerified(entity.getIsVerified());
+            user.setVerificationCode(entity.getVerificationCode());
+            user.setVerificationCodeExpiresAt(entity.getVerificationCodeExpiresAt());
 
             return user;
         } catch (Exception e) {
@@ -139,7 +169,29 @@ public class DatabaseHelper {
     public void initializeSampleData() {
         // Kiểm tra xem có data chưa
         if (userDao.getAll().isEmpty()) {
-            // Tạo user mẫu
+            // Create test accounts with verified status
+            User testWorker = new User("test@gmail.com", "123456", "Nguyen Van A", "worker");
+            testWorker.setGender(true);
+            testWorker.setDescription("Test worker account");
+            testWorker.setCurrentLatitude(21.0285);
+            testWorker.setCurrentLongitude(105.8542);
+            testWorker.setCreatedAt(new Date());
+            testWorker.setVerified(true); // Pre-verified for testing
+
+            User testEmployer = new User("employer@gmail.com", "123456", "Tran Thi B", "employer");
+            testEmployer.setGender(false);
+            testEmployer.setDescription("Test employer account");
+            testEmployer.setCurrentLatitude(21.0195);
+            testEmployer.setCurrentLongitude(105.8325);
+            testEmployer.setPostQuota(100);
+            testEmployer.setCreatedAt(new Date());
+            testEmployer.setVerified(true); // Pre-verified for testing
+
+            // Insert test accounts
+            insertUser(testWorker);
+            insertUser(testEmployer);
+
+            // Tạo user mẫu khác
             User worker1 = new User("nguyenvana@gmail.com", "123456", "Nguyễn Văn A", "WORKER");
             worker1.setPhoneNumber("0909123456");
             worker1.setGender(true);
@@ -292,7 +344,7 @@ public class DatabaseHelper {
     }
 
     private UserEntity createNewEmployer(String email, String companyName, String description,
-                                         double latitude, double longitude) {
+            double latitude, double longitude) {
         User newEmployer = new User(email, "123456", companyName, "EMPLOYER");
         newEmployer.setGender(null);
         newEmployer.setDescription(description);
@@ -306,9 +358,9 @@ public class DatabaseHelper {
     }
 
     private void createJobForUser(UserEntity employer, String title, String description,
-                                  String salary, String location, String jobType,
-                                  String experienceLevel, int neededAmount, String workingTime,
-                                  double latitude, double longitude) {
+            String salary, String location, String jobType,
+            String experienceLevel, int neededAmount, String workingTime,
+            double latitude, double longitude) {
         JobEntity job = new JobEntity();
         job.setJobId(UUID.randomUUID().toString());
         job.setUserId(employer.getId());
@@ -328,7 +380,6 @@ public class DatabaseHelper {
         job.setIsActive(true);
 
         jobDao.insert(job);
-        System.out.println("Created job: " + title + " by " + employer.getFullName());
     }
 
     // Job methods
@@ -440,14 +491,22 @@ public class DatabaseHelper {
                 null,
                 "pending",
                 null,
-                now
-        );
+                now);
     }
-
 
     public void close() {
         if (executor != null) {
             executor.shutdown();
         }
+    }
+
+    // Verification methods
+    public void updateVerificationCode(String email, String code, Date expiresAt) {
+        userDao.updateVerificationCode(email, code, expiresAt);
+    }
+
+    public boolean verifyUser(String email, String code, Date currentTime) {
+        int updatedRows = userDao.verifyUser(email, code, currentTime);
+        return updatedRows > 0;
     }
 }

@@ -11,7 +11,10 @@ import com.example.projectprm392.viewmodels.LoginResponse;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
 import com.example.projectprm392.utils.ValidationUtils;
+import com.example.projectprm392.utils.EmailService;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +28,27 @@ public class LoginController {
     
     public interface RegisterCallback {
         void onSuccess(LoginResponse response);
+        void onError(String error);
+    }
+    
+    public interface VerificationCallback {
+        void onSuccess();
+        void onError(String error);
+    }
+    
+    public interface EmailExistsCallback {
+        void onEmailExists(String fullName);
+        void onEmailNotExists();
+        void onError(String error);
+    }
+    
+    public interface UpdatePasswordCallback {
+        void onSuccess();
+        void onError(String error);
+    }
+    
+    public interface UserInfoCallback {
+        void onSuccess(String fullName);
         void onError(String error);
     }
     
@@ -59,7 +83,9 @@ public class LoginController {
             return;
         }
 
-        LoginRequest request = new LoginRequest(email, password);
+        // Hash password trước khi gửi request
+        String hashedPassword = ValidationUtils.hashPassword(password);
+        LoginRequest request = new LoginRequest(email, hashedPassword);
         
         // Sử dụng SQLite Database
         executorService.execute(() -> {
@@ -112,6 +138,10 @@ public class LoginController {
         // Sử dụng SQLite Database
         executorService.execute(() -> {
             try {
+                // Hash password trước khi lưu
+                String hashedPassword = ValidationUtils.hashPassword(user.getPassword());
+                user.setPassword(hashedPassword);
+                
                 LoginResponse response = databaseApiService.register(user);
                 
                 mainHandler.post(() -> {
@@ -147,5 +177,177 @@ public class LoginController {
         user.setRole(sessionManager.getRole());
         
         return user;
+    }
+    
+    public void sendVerificationEmail(String email, String fullName, EmailService.EmailCallback callback) {
+        executorService.execute(() -> {
+            try {
+                // Use EmailJS with context for real email sending
+                EmailService.sendVerificationEmailWithContext(context, email, fullName, new EmailService.EmailCallback() {
+                    @Override
+                    public void onSuccess(String verificationCode) {
+                        // Lưu verification code vào database với thời gian hết hạn
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.MINUTE, 15); // Hết hạn sau 15 phút
+                        Date expiresAt = calendar.getTime();
+                        
+                        databaseApiService.updateVerificationCode(email, verificationCode, expiresAt);
+                        callback.onSuccess(verificationCode);
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        callback.onError(error);
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error sending verification email", e);
+                callback.onError("Lỗi gửi email xác thực");
+            }
+        });
+    }
+    
+    public void verifyEmail(String email, String code, VerificationCallback callback) {
+        executorService.execute(() -> {
+            try {
+                Date currentTime = new Date();
+                boolean isVerified = databaseApiService.verifyUser(email, code, currentTime);
+                
+                mainHandler.post(() -> {
+                    if (isVerified) {
+                        callback.onSuccess();
+                    } else {
+                        callback.onError("Mã xác thực không đúng hoặc đã hết hạn");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error verifying email", e);
+                mainHandler.post(() -> callback.onError("Lỗi xác thực email"));
+            }
+        });
+    }
+    
+    public void updateVerificationCode(String email, String code) {
+        executorService.execute(() -> {
+            try {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE, 15);
+                Date expiresAt = calendar.getTime();
+                
+                databaseApiService.updateVerificationCode(email, code, expiresAt);
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating verification code", e);
+            }
+        });
+    }
+    
+    /**
+     * Kiểm tra email có tồn tại trong hệ thống không
+     */
+    public void checkEmailExists(String email, EmailExistsCallback callback) {
+        executorService.execute(() -> {
+            try {
+                User user = databaseApiService.getUserByEmail(email);
+                
+                mainHandler.post(() -> {
+                    if (user != null) {
+                        callback.onEmailExists(user.getFullName());
+                    } else {
+                        callback.onEmailNotExists();
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking email exists", e);
+                mainHandler.post(() -> callback.onError("Lỗi kiểm tra email"));
+            }
+        });
+    }
+    
+    /**
+     * Lưu mã reset password vào database
+     */
+    public void savePasswordResetCode(String email, String resetCode) {
+        executorService.execute(() -> {
+            try {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.MINUTE, 15); // Hết hạn sau 15 phút
+                Date expiresAt = calendar.getTime();
+                
+                databaseApiService.updateVerificationCode(email, resetCode, expiresAt);
+            } catch (Exception e) {
+                Log.e(TAG, "Error saving password reset code", e);
+            }
+        });
+    }
+    
+    /**
+     * Xác thực mã reset password
+     */
+    public void verifyPasswordResetCode(String email, String resetCode, VerificationCallback callback) {
+        executorService.execute(() -> {
+            try {
+                Date currentTime = new Date();
+                boolean isValid = databaseApiService.verifyUser(email, resetCode, currentTime);
+                
+                mainHandler.post(() -> {
+                    if (isValid) {
+                        callback.onSuccess();
+                    } else {
+                        callback.onError("Mã xác thực không đúng hoặc đã hết hạn");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error verifying password reset code", e);
+                mainHandler.post(() -> callback.onError("Lỗi xác thực mã reset"));
+            }
+        });
+    }
+    
+    /**
+     * Cập nhật mật khẩu mới
+     */
+    public void updatePassword(String email, String newPassword, UpdatePasswordCallback callback) {
+        executorService.execute(() -> {
+            try {
+                // Hash password trước khi lưu
+                String hashedPassword = ValidationUtils.hashPassword(newPassword);
+                boolean success = databaseApiService.updatePassword(email, hashedPassword);
+                
+                mainHandler.post(() -> {
+                    if (success) {
+                        // Clear reset code sau khi update thành công
+                        databaseApiService.clearVerificationCode(email);
+                        callback.onSuccess();
+                    } else {
+                        callback.onError("Không thể cập nhật mật khẩu");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating password", e);
+                mainHandler.post(() -> callback.onError("Lỗi cập nhật mật khẩu"));
+            }
+        });
+    }
+    
+    /**
+     * Lấy tên đầy đủ của user theo email
+     */
+    public void getUserFullName(String email, UserInfoCallback callback) {
+        executorService.execute(() -> {
+            try {
+                User user = databaseApiService.getUserByEmail(email);
+                
+                mainHandler.post(() -> {
+                    if (user != null) {
+                        callback.onSuccess(user.getFullName());
+                    } else {
+                        callback.onError("Không tìm thấy user");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting user full name", e);
+                mainHandler.post(() -> callback.onError("Lỗi lấy thông tin user"));
+            }
+        });
     }
 }

@@ -19,6 +19,9 @@ public class User {
     private Double currentLongitude;
     private Date createdAt;
     private Boolean isActive;
+    private boolean isVerified;
+    private String verificationCode;
+    private Date verificationCodeExpiresAt;
 
     // Constructors
     public User() {
@@ -57,23 +60,22 @@ public class User {
     public String getPassword() {
         return password;
     }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-public Boolean getOtpVerified() {
+
+    public Boolean getOtpVerified() {
         return otpVerified;
     }
-
 
     public void setOtpVerified(Boolean otpVerified) {
         this.otpVerified = otpVerified;
     }
-
 
     public void setPassword(String password) {
         this.password = password;
@@ -183,11 +185,16 @@ public Boolean getOtpVerified() {
     }
 
     public String getPostQuotaStatus() {
-        if (postQuota == null) return "Chưa xác định";
-        if (postQuota >= 20) return "Cần nạp tiền";
-        if (postQuota > 10) return "Bình thường";
-        if (postQuota > 5) return "Sắp hết quota";
-        if (postQuota > 0) return "Quota thấp";
+        if (postQuota == null)
+            return "Chưa xác định";
+        if (postQuota >= 20)
+            return "Cần nạp tiền";
+        if (postQuota > 10)
+            return "Bình thường";
+        if (postQuota > 5)
+            return "Sắp hết quota";
+        if (postQuota > 0)
+            return "Quota thấp";
         return "Hết quota";
     }
 
@@ -219,7 +226,7 @@ public Boolean getOtpVerified() {
         if (fullName == null || fullName.trim().isEmpty()) {
             return false;
         }
-        
+
         // Validate phoneNumber - sử dụng method từ UserService
         return true; // Để UserService handle phone validation
     }
@@ -243,5 +250,29 @@ public Boolean getOtpVerified() {
         copy.createdAt = this.createdAt;
         copy.isActive = this.isActive;
         return copy;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Date getVerificationCodeExpiresAt() {
+        return verificationCodeExpiresAt;
+    }
+
+    public void setVerificationCodeExpiresAt(Date verificationCodeExpiresAt) {
+        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
 }

@@ -52,6 +52,15 @@ public class UserEntity {
     
     @ColumnInfo(name = "is_active")
     private Boolean isActive;
+    
+    @ColumnInfo(name = "is_verified")
+    private boolean isVerified;
+    
+    @ColumnInfo(name = "verification_code")
+    private String verificationCode;
+    
+    @ColumnInfo(name = "verification_code_expires_at")
+    private Date verificationCodeExpiresAt;
 
     // Constructors
     public UserEntity() {}
@@ -59,7 +68,8 @@ public class UserEntity {
     public UserEntity(String userId, String email, String password, String fullName, 
                      String phoneNumber, Boolean gender, String role, String levelOfViolation, String description, 
                      Integer postQuota, Double currentLatitude, Double currentLongitude, 
-                     Date createdAt, Boolean isActive) {
+                     Date createdAt, Boolean isActive, boolean isVerified, String verificationCode, 
+                     Date verificationCodeExpiresAt) {
         this.userId = userId;
         this.email = email;
         this.password = password;
@@ -74,6 +84,9 @@ public class UserEntity {
         this.currentLongitude = currentLongitude;
         this.createdAt = createdAt;
         this.isActive = isActive;
+        this.isVerified = isVerified;
+        this.verificationCode = verificationCode;
+        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
 
     // Getters and Setters
@@ -195,5 +208,29 @@ public class UserEntity {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public boolean getIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Date getVerificationCodeExpiresAt() {
+        return verificationCodeExpiresAt;
+    }
+
+    public void setVerificationCodeExpiresAt(Date verificationCodeExpiresAt) {
+        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
 }

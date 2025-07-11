@@ -1,6 +1,7 @@
 package com.example.projectprm392.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.UserEntity;
@@ -8,6 +9,7 @@ import com.example.projectprm392.viewmodels.LoginRequest;
 import com.example.projectprm392.viewmodels.LoginResponse;
 import com.example.projectprm392.models.User;
 
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class DatabaseApiService {
     
     private DatabaseHelper databaseHelper;
+    private static final String TAG = "DatabaseApiService";
     
     public DatabaseApiService(Context context) {
         databaseHelper = new DatabaseHelper(context);
@@ -39,6 +42,11 @@ public class DatabaseApiService {
         );
         
         if (userEntity != null) {
+            // Kiểm tra xem user đã verify chưa
+            if (!userEntity.getIsVerified()) {
+                return new LoginResponse(false, "Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản.");
+            }
+            
             // Chuyển đổi entity sang user model
             User user = databaseHelper.convertEntityToUser(userEntity);
             
@@ -69,12 +77,14 @@ public class DatabaseApiService {
             return new LoginResponse(false, "Email đã được sử dụng");
         }
         
-        // Lưu user vào database
+        // Lưu user vào database với is_verified = false
         try {
+            // Set user as not verified initially
+            user.setVerified(false);
             long userId = databaseHelper.insertUser(user);
             
             if (userId > 0) {
-                LoginResponse response = new LoginResponse(true, "Đăng ký thành công. Bạn có thể đăng nhập ngay.");
+                LoginResponse response = new LoginResponse(true, "Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.");
                 response.setUser(user);
                 response.setToken("db_token_" + UUID.randomUUID().toString());
                 return response;
@@ -132,6 +142,73 @@ public class DatabaseApiService {
     public void close() {
         if (databaseHelper != null) {
             databaseHelper.close();
+        }
+    }
+    
+    public void updateVerificationCode(String email, String code, Date expiresAt) {
+        try {
+            databaseHelper.updateVerificationCode(email, code, expiresAt);
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating verification code", e);
+            throw e;
+        }
+    }
+    
+    public boolean verifyUser(String email, String code, Date currentTime) {
+        try {
+            boolean isVerified = databaseHelper.verifyUser(email, code, currentTime);
+            return isVerified;
+        } catch (Exception e) {
+            Log.e(TAG, "Error verifying user", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Cập nhật mật khẩu cho user
+     */
+    public boolean updatePassword(String email, String hashedPassword) {
+        try {
+            boolean success = databaseHelper.updatePassword(email, hashedPassword);
+            return success;
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating password", e);
+            return false;
+        }
+    }
+    
+    /**
+     * Xóa verification code sau khi sử dụng
+     */
+    public void clearVerificationCode(String email) {
+        try {
+            databaseHelper.clearVerificationCode(email);
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing verification code", e);
+        }
+    }
+    
+    /**
+     * Lấy user theo email
+     */
+    public User getUserByEmail(String email) {
+        try {
+            UserEntity userEntity = databaseHelper.getUserByEmail(email);
+            
+            if (userEntity != null) {
+                User user = new User();
+                user.setUserId(UUID.fromString(userEntity.getUserId()));
+                user.setEmail(userEntity.getEmail());
+                user.setFullName(userEntity.getFullName());
+                user.setRole(userEntity.getRole());
+                user.setVerified(userEntity.getIsVerified());
+                return user;
+            }
+            
+            return null;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting user by email", e);
+            return null;
         }
     }
 }

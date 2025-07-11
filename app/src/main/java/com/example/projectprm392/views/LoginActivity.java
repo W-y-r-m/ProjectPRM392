@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin;
     private ProgressBar progressBar;
-    private TextView tvRegisterLink;
+    private TextView tvRegisterLink, tvForgotPassword;
 
     private LoginController loginController;
 
@@ -44,12 +44,19 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         
-        // Get data from intent (from RegisterActivity)
+        // Check if there's a verification success message
         Intent intent = getIntent();
         if (intent != null) {
             String email = intent.getStringExtra("email");
             if (email != null) {
                 etEmail.setText(email);
+            }
+            
+            boolean isVerified = intent.getBooleanExtra("verified", false);
+            String message = intent.getStringExtra("message");
+            
+            if (isVerified && message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -62,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         progressBar = findViewById(R.id.progressBar);
         tvRegisterLink = findViewById(R.id.tvRegisterLink);
+        tvForgotPassword = findViewById(R.id.tvForgotPassword);
     }
 
     private void setupController() {
@@ -73,6 +81,11 @@ public class LoginActivity extends AppCompatActivity {
 
         tvRegisterLink.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        tvForgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
     }
@@ -114,7 +127,22 @@ public class LoginActivity extends AppCompatActivity {
             public void onError(String error) {
                 runOnUiThread(() -> {
                     showLoading(false);
-                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    
+                    // Handle specific error cases
+                    if (error.contains("chưa được xác thực") || error.contains("not verified")) {
+                        // Show verification prompt with option to resend email
+                        showVerificationDialog(email);
+                    } else if (error.contains("Mật khẩu")) {
+                        tilPassword.setError("Mật khẩu không chính xác");
+                        etPassword.requestFocus();
+                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    } else if (error.contains("không tồn tại")) {
+                        tilEmail.setError("Tài khoản không tồn tại");
+                        etEmail.requestFocus();
+                        Toast.makeText(LoginActivity.this, error + " Vui lòng đăng ký tài khoản mới.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    }
                 });
             }
         });
@@ -130,5 +158,58 @@ public class LoginActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void showVerificationDialog(String email) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Tài khoản chưa xác thực");
+        builder.setMessage("Tài khoản của bạn chưa được xác thực email. Bạn có muốn gửi lại email xác thực không?");
+        
+        builder.setPositiveButton("Gửi lại email", (dialog, which) -> {
+            // Get user info and resend verification email
+            resendVerificationEmail(email);
+        });
+        
+        builder.setNegativeButton("Hủy", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        
+        builder.setNeutralButton("Đăng ký lại", (dialog, which) -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+        
+        builder.show();
+    }
+    
+    private void resendVerificationEmail(String email) {
+        showLoading(true);
+        
+        // We need to get the user's full name first, so we'll use a simplified approach
+        // In a real implementation, you might want to have an API to resend verification without full name
+        loginController.sendVerificationEmail(email, "Người dùng", new com.example.projectprm392.utils.EmailService.EmailCallback() {
+            @Override
+            public void onSuccess(String verificationCode) {
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(LoginActivity.this, "Đã gửi email xác thực. Vui lòng kiểm tra hộp thư.", Toast.LENGTH_LONG).show();
+                    
+                    // Navigate to verification screen
+                    Intent intent = new Intent(LoginActivity.this, EmailVerificationActivity.class);
+                    intent.putExtra("email", email);
+                    intent.putExtra("fullName", "Người dùng");
+                    intent.putExtra("verificationCode", verificationCode);
+                    startActivity(intent);
+                });
+            }
+            
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(LoginActivity.this, "Lỗi gửi email: " + error, Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 }

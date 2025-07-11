@@ -101,19 +101,36 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Forgot Password Link -->
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Quên mật khẩu?"
+            android:textColor="#2196F3"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
+
         <!-- Login Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:text="Đăng nhập"
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilPassword" />
+            app:layout_constraintTop_toBottomOf="@+id/tvForgotPassword" />
 
         <!-- Progress Bar -->
         <ProgressBar
