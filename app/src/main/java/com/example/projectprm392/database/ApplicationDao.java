@@ -20,7 +20,7 @@ public interface ApplicationDao {
     @Update
     void update(ApplicationEntity application);
 
-    // Xoá application 
+    // Xoá application
     @Delete
     void delete(ApplicationEntity application);
 
