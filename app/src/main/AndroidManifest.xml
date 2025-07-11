@@ -113,7 +113,7 @@
 
         <!-- Application Form Activity -->
         <activity
-            android:name=".activities.ApplicationFormActivity"
+            android:name=".activities.ApplicationFormActivity"/>
         
         <!-- EmailVerificationActivity -->
         <activity
