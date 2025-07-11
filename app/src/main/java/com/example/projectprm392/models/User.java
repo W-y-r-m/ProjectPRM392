@@ -19,6 +19,9 @@ public class User {
     private Double currentLongitude;
     private Date createdAt;
     private Boolean isActive;
+    private boolean isVerified;
+    private String verificationCode;
+    private Date verificationCodeExpiresAt;
 
     // Constructors
     public User() {
@@ -157,5 +160,29 @@ public Boolean getOtpVerified() {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Date getVerificationCodeExpiresAt() {
+        return verificationCodeExpiresAt;
+    }
+
+    public void setVerificationCodeExpiresAt(Date verificationCodeExpiresAt) {
+        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
 }

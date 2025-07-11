@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="@android:color/white">
+
+    <!-- Header -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_email"
+        android:layout_marginBottom="24dp"
+        android:tint="#2196F3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Xác thực Email"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvEmailSent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chúng tôi đã gửi mã xác thực đến email:"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test@gmail.com"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#2196F3"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Verification Code Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etVerificationCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nhập mã xác thực (6 chữ số)"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:letterSpacing="0.5" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Verify Button -->
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Xác thực"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#2196F3"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Resend Code -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Không nhận được mã? "
+            android:textColor="#666666" />
+
+        <TextView
+            android:id="@+id/tvResendCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gửi lại"
+            android:textColor="#2196F3"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+    <!-- Resend Timer -->
+    <TextView
+        android:id="@+id/tvResendTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</LinearLayout>

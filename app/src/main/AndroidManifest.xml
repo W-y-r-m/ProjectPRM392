@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectPRM392"
         android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
         <activity
             android:name=".activities.ApplicationActivity"
@@ -41,6 +42,24 @@
             android:theme="@style/Theme.ProjectPRM392" /> <!-- RegisterActivity -->
         <activity
             android:name=".views.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+        
+        <!-- EmailVerificationActivity -->
+        <activity
+            android:name=".views.EmailVerificationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- ForgotPasswordActivity -->
+        <activity
+            android:name=".views.ForgotPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- ResetPasswordActivity -->
+        <activity
+            android:name=".views.ResetPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
     </application>

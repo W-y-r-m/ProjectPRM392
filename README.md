@@ -1,31 +1,47 @@
-# PRM392 - Android Login App với SQLite Database
+# PRM392 Job Finder App
 
 ## 📱 Mô tả Project
-App Android với chức năng đăng nhập/đăng ký sử dụng SQLite database, theo mô hình MVC.
+Ứng dụng Android Job Finder với chức năng đăng ký/đăng nhập, email verification và quản lý công việc. Sử dụng SQLite database và Gmail SMTP cho email service.
 
 ## 🚀 Chức năng chính
-- ✅ **Đăng ký**: Email + Password + Thông tin cá nhân
-- ✅ **Đăng nhập**: Email + Password  
-- ✅ **Logout**: Menu hoặc nút đăng xuất
-- ✅ **SQLite Database**: Lưu trữ dữ liệu local với Room
-- ✅ **Session Management**: Quản lý phiên đăng nhập
+- ✅ **Đăng ký**: Email + Password + Email Verification
+- ✅ **Đăng nhập**: Email + Password với session management
+- ✅ **Email Verification**: Gmail SMTP với verification code
+- ✅ **Job Management**: Tìm kiếm và ứng tuyển công việc
+- ✅ **SQLite Database**: Room database cho data persistence
+- ✅ **Location Services**: Google Maps integration
 
 ## 🛠️ Tech Stack
 - **Android Studio** - IDE
 - **Java** - Programming language
 - **SQLite + Room** - Local database
+- **Gmail SMTP + JavaMail** - Email service
+- **Google Maps** - Location services
 - **Material Design** - UI components
-- **Retrofit** - API client (backup for future use)
+- **Retrofit** - API client
+
+## 📧 Email Service Setup
+
+### Gmail SMTP Configuration:
+1. Tạo Gmail account cho app
+2. Bật 2-Factor Authentication
+3. Tạo App Password: https://myaccount.google.com/apppasswords
+4. Cập nhật credentials trong `GmailEmailService.java`:
+
+```java
+private static final String SENDER_EMAIL = "your-app-email@gmail.com";
+private static final String SENDER_PASSWORD = "your-app-password";
+```
 
 ## 📁 Cấu trúc Project (MVC)
 ```
 app/src/main/java/com/example/projectprm392/
-├── models/          # User, LoginRequest, LoginResponse
-├── views/           # LoginActivity, RegisterActivity  
-├── controllers/     # LoginController
+├── models/          # User, Job entities
+├── views/           # Activities và UI components
+├── controllers/     # Business logic controllers
 ├── database/        # Room database components
-├── api/            # API services
-└── utils/          # SessionManager, ValidationUtils
+├── utils/           # EmailService, GmailEmailService, utilities
+└── activities/      # Main activities
 ```
 
 ## 🎮 Cách chạy

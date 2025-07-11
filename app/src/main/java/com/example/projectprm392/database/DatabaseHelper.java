@@ -71,6 +71,30 @@ public class DatabaseHelper {
     public List<UserEntity> getUsersByRole(String role) {
         return userDao.getByRole(role);
     }
+    
+    /**
+     * Update password for user by email
+     */
+    public boolean updatePassword(String email, String hashedPassword) {
+        try {
+            int rowsAffected = userDao.updatePassword(email, hashedPassword);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Clear verification code for user by email
+     */
+    public void clearVerificationCode(String email) {
+        try {
+            userDao.clearVerificationCode(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // Convert methods
     public UserEntity convertUserToEntity(User user) {
@@ -90,6 +114,9 @@ public class DatabaseHelper {
         entity.setCurrentLongitude(user.getCurrentLongitude());
         entity.setCreatedAt(user.getCreatedAt());
         entity.setIsActive(user.getIsActive());
+        entity.setIsVerified(user.isVerified());
+        entity.setVerificationCode(user.getVerificationCode());
+        entity.setVerificationCodeExpiresAt(user.getVerificationCodeExpiresAt());
 
         return entity;
     }
@@ -111,6 +138,9 @@ public class DatabaseHelper {
         user.setCurrentLongitude(entity.getCurrentLongitude());
         user.setCreatedAt(entity.getCreatedAt());
         user.setIsActive(entity.getIsActive());
+        user.setVerified(entity.getIsVerified());
+        user.setVerificationCode(entity.getVerificationCode());
+        user.setVerificationCodeExpiresAt(entity.getVerificationCodeExpiresAt());
 
         return user;
     }
@@ -119,7 +149,29 @@ public class DatabaseHelper {
     public void initializeSampleData() {
         // Kiểm tra xem có data chưa
         if (userDao.getAll().isEmpty()) {
-            // Tạo user mẫu
+            // Create test accounts with verified status
+            User testWorker = new User("test@gmail.com", "123456", "Nguyen Van A", "worker");
+            testWorker.setGender(true);
+            testWorker.setDescription("Test worker account");
+            testWorker.setCurrentLatitude(21.0285);
+            testWorker.setCurrentLongitude(105.8542);
+            testWorker.setCreatedAt(new Date());
+            testWorker.setVerified(true); // Pre-verified for testing
+            
+            User testEmployer = new User("employer@gmail.com", "123456", "Tran Thi B", "employer");
+            testEmployer.setGender(false);
+            testEmployer.setDescription("Test employer account");
+            testEmployer.setCurrentLatitude(21.0195);
+            testEmployer.setCurrentLongitude(105.8325);
+            testEmployer.setPostQuota(100);
+            testEmployer.setCreatedAt(new Date());
+            testEmployer.setVerified(true); // Pre-verified for testing
+            
+            // Insert test accounts
+            insertUser(testWorker);
+            insertUser(testEmployer);
+            
+            // Tạo user mẫu khác
             User worker1 = new User("nguyenvana@gmail.com", "123456", "Nguyễn Văn A", "WORKER");
             worker1.setGender(true);
             worker1.setDescription("Tôi có kinh nghiệm làm việc phục vụ bàn, giao hàng và bán hàng");
@@ -301,7 +353,6 @@ public class DatabaseHelper {
         job.setIsActive(true);
 
         jobDao.insert(job);
-        System.out.println("Created job: " + title + " by " + employer.getFullName());
     }
 
     // Job methods
@@ -422,5 +473,15 @@ public class DatabaseHelper {
         if (executor != null) {
             executor.shutdown();
         }
+    }
+
+    // Verification methods
+    public void updateVerificationCode(String email, String code, Date expiresAt) {
+        userDao.updateVerificationCode(email, code, expiresAt);
+    }
+
+    public boolean verifyUser(String email, String code, Date currentTime) {
+        int updatedRows = userDao.verifyUser(email, code, currentTime);
+        return updatedRows > 0;
     }
 }

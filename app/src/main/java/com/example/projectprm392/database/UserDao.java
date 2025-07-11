@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -43,4 +44,22 @@ public interface UserDao {
     
     @Query("DELETE FROM users")
     void deleteAll();
+    
+    // Verification methods
+    @Query("UPDATE users SET verification_code = :code, verification_code_expires_at = :expiresAt WHERE email = :email")
+    void updateVerificationCode(String email, String code, Date expiresAt);
+    
+    @Query("UPDATE users SET is_verified = 1, verification_code = NULL, verification_code_expires_at = NULL WHERE email = :email AND verification_code = :code AND verification_code_expires_at > :currentTime")
+    int verifyUser(String email, String code, Date currentTime);
+    
+    @Query("SELECT * FROM users WHERE email = :email AND verification_code = :code AND verification_code_expires_at > :currentTime")
+    UserEntity findUserByVerificationCode(String email, String code, Date currentTime);
+    
+    // Password update method
+    @Query("UPDATE users SET password = :hashedPassword WHERE email = :email")
+    int updatePassword(String email, String hashedPassword);
+    
+    // Clear verification code
+    @Query("UPDATE users SET verification_code = NULL, verification_code_expires_at = NULL WHERE email = :email")
+    void clearVerificationCode(String email);
 }

@@ -29,6 +29,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/LICENSE.md" 
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/NOTICE"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/notice.txt"
+            excludes += "/META-INF/license.txt"
+            excludes += "/META-INF/ASL2.0"
+            excludes += "/META-INF/*.kotlin_module"
+        }
+    }
 }
 
 dependencies {
@@ -44,6 +59,10 @@ dependencies {
     
     // Gson for JSON parsing (needed for Room converters)
     implementation("com.google.code.gson:gson:2.10.1")
+    
+    // Email functionality - Gmail SMTP with JavaMail
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
     
     // Location Services
     implementation("com.google.android.gms:play-services-location:21.0.1")
