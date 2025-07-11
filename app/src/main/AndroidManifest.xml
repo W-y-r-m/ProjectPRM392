@@ -47,6 +47,18 @@
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
 
+        <!-- ReportActivity -->
+        <activity
+            android:name=".activities.ReportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+
         <!-- PostHistoryActivity -->
         <activity
             android:name=".activities.PostHistoryActivity"
