@@ -1,7 +1,6 @@
 package com.example.projectprm392.database;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.example.projectprm392.models.User;
 
@@ -12,19 +11,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DatabaseHelper {
-    private static final String PREF_NAME = "AppPrefs";
-    private static final String KEY_SAMPLE_DATA_CREATED = "sample_data_created";
-    private static final String KEY_SAMPLE_APPLICATIONS_CREATED = "sample_applications_created";
-
     private AppDatabase database;
     private UserDao userDao;
     private JobDao jobDao;
     private ApplicationDao applicationDao;
     private ExecutorService executor;
-    private Context context;
 
     public DatabaseHelper(Context context) {
-        this.context = context;
         database = AppDatabase.getDatabase(context);
         userDao = database.userDao();
         jobDao = database.jobDao();
@@ -87,8 +80,7 @@ public class DatabaseHelper {
 
     // Convert methods
     public UserEntity convertUserToEntity(User user) {
-        if (user == null)
-            return null;
+        if (user == null) return null;
 
         try {
             UserEntity entity = new UserEntity();
@@ -116,8 +108,7 @@ public class DatabaseHelper {
     }
 
     public User convertEntityToUser(UserEntity entity) {
-        if (entity == null)
-            return null;
+        if (entity == null) return null;
 
         try {
             User user = new User();
@@ -200,14 +191,6 @@ public class DatabaseHelper {
             employer3.setPostQuota(20);
             employer3.setCreatedAt(new Date());
 
-            User employer3 = new User("nhahangtuan@gmail.com", "123456", "Nhà Hàng Tuấn", "EMPLOYER");
-            employer3.setGender(null);
-            employer3.setDescription("Nhà hàng gia đình cần nhân viên bán thời gian");
-            employer3.setCurrentLatitude(21.0355);
-            employer3.setCurrentLongitude(105.8445);
-            employer3.setPostQuota(20);
-            employer3.setCreatedAt(new Date());
-
             insertUser(worker1);
             insertUser(worker2);
             insertUser(worker3);
@@ -217,15 +200,7 @@ public class DatabaseHelper {
 
             // Tạo dữ liệu job mẫu
             createSampleJobs();
-
-            prefs.edit().putBoolean(KEY_SAMPLE_DATA_CREATED, true).apply();
         }
-    }
-
-    // Always attempt to create sample applications, but it will be guarded by its
-    // own SharedPreferences flag
-    createSampleApplications();
-
     }
 
     // Job helper methods
@@ -317,7 +292,7 @@ public class DatabaseHelper {
     }
 
     private UserEntity createNewEmployer(String email, String companyName, String description,
-            double latitude, double longitude) {
+                                         double latitude, double longitude) {
         User newEmployer = new User(email, "123456", companyName, "EMPLOYER");
         newEmployer.setGender(null);
         newEmployer.setDescription(description);
@@ -331,9 +306,9 @@ public class DatabaseHelper {
     }
 
     private void createJobForUser(UserEntity employer, String title, String description,
-            String salary, String location, String jobType,
-            String experienceLevel, int neededAmount, String workingTime,
-            double latitude, double longitude) {
+                                  String salary, String location, String jobType,
+                                  String experienceLevel, int neededAmount, String workingTime,
+                                  double latitude, double longitude) {
         JobEntity job = new JobEntity();
         job.setJobId(UUID.randomUUID().toString());
         job.setUserId(employer.getId());
@@ -431,31 +406,24 @@ public class DatabaseHelper {
     }
 
     public void createSampleApplications() {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        boolean sampleApplicationsCreated = prefs.getBoolean(KEY_SAMPLE_APPLICATIONS_CREATED, false);
+        List<UserEntity> users = getUsersByRole("WORKER");
+        List<JobEntity> jobs = getAllJobs();
 
-        if (!sampleApplicationsCreated) {
-            List<UserEntity> users = getUsersByRole("WORKER");
-            List<JobEntity> jobs = getAllJobs();
+        if (!users.isEmpty() && !jobs.isEmpty()) {
+            UserEntity worker1 = users.get(0);
+            UserEntity worker2 = users.get(1);
+            UserEntity worker3 = users.get(2);
 
-            if (!users.isEmpty() && !jobs.isEmpty()) {
-                UserEntity worker1 = users.get(0);
-                UserEntity worker2 = users.get(1);
-                UserEntity worker3 = users.get(2);
+            // Worker 1 ứng tuyển 2 job
+            insertApplication(createApplication(worker1, jobs.get(0), "Em có kinh nghiệm phục vụ bàn."));
+            insertApplication(createApplication(worker1, jobs.get(1), "Em rất đam mê pha chế đồ uống."));
 
-                // Worker 1 ứng tuyển 2 job
-                insertApplication(createApplication(worker1, jobs.get(0), "Em có kinh nghiệm phục vụ bàn."));
-                insertApplication(createApplication(worker1, jobs.get(1), "Em rất đam mê pha chế đồ uống."));
+            // Worker 2 ứng tuyển 1 job
+            insertApplication(createApplication(worker2, jobs.get(2), "Em có thể giao hàng vào cuối tuần."));
 
-                // Worker 2 ứng tuyển 1 job
-                insertApplication(createApplication(worker2, jobs.get(2), "Em có thể giao hàng vào cuối tuần."));
-
-                // Worker 3 ứng tuyển 2 job
-                insertApplication(createApplication(worker3, jobs.get(3), "Em từng làm đóng gói 6 tháng."));
-                insertApplication(createApplication(worker3, jobs.get(4), "Em thích làm việc với khách hàng."));
-
-                prefs.edit().putBoolean(KEY_SAMPLE_APPLICATIONS_CREATED, true).apply();
-            }
+            // Worker 3 ứng tuyển 2 job
+            insertApplication(createApplication(worker3, jobs.get(3), "Em từng làm đóng gói 6 tháng."));
+            insertApplication(createApplication(worker3, jobs.get(4), "Em thích làm việc với khách hàng."));
         }
     }
 
@@ -472,8 +440,10 @@ public class DatabaseHelper {
                 null,
                 "pending",
                 null,
-                now);
+                now
+        );
     }
+
 
     public void close() {
         if (executor != null) {
