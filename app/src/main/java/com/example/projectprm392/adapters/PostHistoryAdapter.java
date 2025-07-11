@@ -7,14 +7,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.projectprm392.R;
-import com.example.projectprm392.database.PostHistoryEntity;
+import com.example.projectprm392.database.JobEntity;
 import java.util.List;
 
 public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.ViewHolder> {
-    private List<PostHistoryEntity> postList;
+    private List<JobEntity> jobList;
 
-    public PostHistoryAdapter(List<PostHistoryEntity> postList) {
-        this.postList = postList;
+    public PostHistoryAdapter(List<JobEntity> jobList) {
+        this.jobList = jobList;
     }
 
     @NonNull
@@ -26,15 +26,15 @@ public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PostHistoryEntity post = postList.get(position);
-        holder.tvTitle.setText(post.title);
-        holder.tvDate.setText(post.date);
-        holder.tvContent.setText(post.content);
+        JobEntity job = jobList.get(position);
+        holder.tvTitle.setText(job.getTitle());
+        holder.tvDate.setText(job.getCreatedAt() != null ? job.getCreatedAt().toString() : "");
+        holder.tvContent.setText(job.getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return postList.size();
+        return jobList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

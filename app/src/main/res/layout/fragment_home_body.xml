@@ -61,6 +61,19 @@
                         android:backgroundTint="#4267B2"
                         app:cornerRadius="18dp" />
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewJobHistory"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:minWidth="64dp"
+                        android:minHeight="48dp"
+                        android:text="Lịch sử đăng Job"
+                        android:textSize="12sp"
+                        android:backgroundTint="#4CAF50"
+                        app:cornerRadius="18dp"
+                        android:layout_marginStart="8dp" />
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
