@@ -12,7 +12,7 @@ import android.content.Context;
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
-    public abstract JobDao jobDao();
+    public abstract JobDao jobDao();    
 
     public abstract ApplicationDao applicationDao();
 
