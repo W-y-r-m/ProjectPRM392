@@ -10,6 +10,18 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+
+        <!-- Nút quay về -->
+        <Button
+            android:id="@+id/btnBackReport"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="← Quay về"
+            android:backgroundTint="#4267B2"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,39 +31,37 @@
             android:layout_gravity="center_horizontal"
             android:paddingBottom="20dp" />
 
+
+        <!-- Chọn user để report -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID người bị báo cáo (TargetUserId)"
+            android:text="Chọn người dùng cần report:"
             android:textColor="#333"
+            android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="8dp" />
-        <com.google.android.material.textfield.TextInputLayout
+        <Spinner
+            android:id="@+id/spinnerUser"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTargetUserId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nhập ID người bị báo cáo" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
 
+
+        <!-- Chọn job của user đó -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Job liên quan (JobId, có thể bỏ trống)"
+            android:text="Chọn job muốn report (có thể bỏ trống):"
             android:textColor="#333"
+            android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="12dp" />
-        <com.google.android.material.textfield.TextInputLayout
+        <Spinner
+            android:id="@+id/spinnerJob"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etJobId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nhập JobId nếu có" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:layout_width="wrap_content"

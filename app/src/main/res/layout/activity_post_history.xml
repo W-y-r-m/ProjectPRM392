@@ -26,6 +26,18 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp" />
 
+    <!-- Nút tạo report -->
+    <Button
+        android:id="@+id/btnCreateReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tạo report"
+        android:backgroundTint="#4267B2"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp" />
+
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPostHistory"

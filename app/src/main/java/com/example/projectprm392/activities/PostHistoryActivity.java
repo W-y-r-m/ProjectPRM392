@@ -70,5 +70,11 @@ public class PostHistoryActivity extends AppCompatActivity {
         }
         adapter = new PostHistoryAdapter(jobList);
         recyclerView.setAdapter(adapter);
+        // Nút tạo report
+        Button btnCreateReport = findViewById(R.id.btnCreateReport);
+        btnCreateReport.setOnClickListener(v -> {
+            Intent intent = new Intent(PostHistoryActivity.this, ReportActivity.class);
+            startActivity(intent);
+        });
     }
 }
