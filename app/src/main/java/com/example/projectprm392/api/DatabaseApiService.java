@@ -86,6 +86,49 @@ public class DatabaseApiService {
         }
     }
     
+    public User getUserById(String userId) {
+        // Simulate network delay
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            UserEntity userEntity = databaseHelper.getUserById(userId);
+            if (userEntity != null) {
+                User convertedUser = databaseHelper.convertEntityToUser(userEntity);
+                if (convertedUser == null) {
+                    throw new RuntimeException("Failed to convert UserEntity to User");
+                }
+                return convertedUser;
+            }
+            return null;
+        } catch (Exception e) {
+            System.err.println("DatabaseApiService.getUserById error: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi lấy thông tin người dùng: " + e.getMessage());
+        }
+    }
+    
+    public User updateUser(User user) {
+        // Simulate network delay
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            boolean success = databaseHelper.updateUser(user);
+            if (success) {
+                return getUserById(user.getUserId().toString());
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi cập nhật thông tin người dùng: " + e.getMessage());
+        }
+    }
+    
     public void close() {
         if (databaseHelper != null) {
             databaseHelper.close();

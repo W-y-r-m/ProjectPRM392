@@ -9,6 +9,9 @@
     <!-- Location permissions (for future use) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- Phone call permission -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -22,34 +25,84 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDBUOW4v71Ww_Z6xBWY8Emc_3wGX2fbnvU" />
+        
+        <activity
+            android:name=".activities.ApplicationActivity"
+            android:exported="false" />
         <!-- MainActivity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        
-        <!-- HomeActivity -->
+        </activity> <!-- HomeActivity -->
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false"
-            android:theme="@style/Theme.ProjectPRM392" />
-        
-        <!-- LoginActivity -->
+            android:theme="@style/Theme.ProjectPRM392" /> <!-- LoginActivity -->
         <activity
             android:name=".views.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.ProjectPRM392" />
-        
-        <!-- RegisterActivity -->
+            android:theme="@style/Theme.ProjectPRM392" /> <!-- RegisterActivity -->
         <activity
             android:name=".views.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- PostHistoryActivity -->
+        <activity
+            android:name=".activities.PostHistoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392">
+            <!-- <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter> -->
+        </activity>
+
+        <!-- Post Type Selection Activity -->
+        <activity
+            android:name=".activities.PostTypeSelectionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- Create Job Seeking Activity -->
+        <activity
+            android:name=".activities.CreateJobSeekingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- Create Job Posting Activity -->
+        <activity
+            android:name=".activities.CreateJobPostingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
         
+        <!-- Profile Activity -->
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- Job Detail Activity -->
+        <activity
+            android:name=".activities.JobDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- Application Form Activity -->
+        <activity
+            android:name=".activities.ApplicationFormActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
     </application>
 
 </manifest>

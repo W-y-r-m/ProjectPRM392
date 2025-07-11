@@ -1,6 +1,7 @@
 package com.example.projectprm392.fragments;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class HomeBodyFragment extends Fragment {
     private RecyclerView rvRecommendedJobs;
     private ChipGroup chipGroupFilters;
     private FloatingActionButton fabPostJob;
+    private MaterialButton btnPostJob;
     private MaterialButton btnShowFilters;
 
     private JobAdapter nearbyJobsAdapter;
@@ -74,7 +76,12 @@ public class HomeBodyFragment extends Fragment {
         rvRecommendedJobs = view.findViewById(R.id.rvRecommendedJobs);
         chipGroupFilters = view.findViewById(R.id.chipGroupJobType);
         fabPostJob = view.findViewById(R.id.fabPostJob);
+        btnPostJob = view.findViewById(R.id.btnPostJob);
         btnShowFilters = view.findViewById(R.id.btnApplyFilters);
+
+        // Debug log
+        android.util.Log.d("HomeBodyFragment", "fabPostJob: " + (fabPostJob != null ? "found" : "null"));
+        android.util.Log.d("HomeBodyFragment", "btnPostJob: " + (btnPostJob != null ? "found" : "null"));
 
         sessionManager = new SessionManager(requireContext());
         databaseHelper = new DatabaseHelper(requireContext());
@@ -89,19 +96,26 @@ public class HomeBodyFragment extends Fragment {
         nearbyJobsAdapter = new JobAdapter(nearbyJobs, new JobAdapter.OnJobClickListener() {
             @Override
             public void onJobClick(JobEntity job) {
-                // Handle job click
-                Toast.makeText(requireContext(), "Clicked: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                // Navigate to JobDetailActivity
+                Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.JobDetailActivity.class);
+                intent.putExtra("JOB_ID", job.getId());
+                startActivity(intent);
             }
 
             @Override
             public void onContactClick(JobEntity job) {
-                // Handle contact click
-                Toast.makeText(requireContext(), "Liên hệ: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                // Handle contact click for job seeking posts
+                if ("JOB_SEEKING".equals(job.getPostType())) {
+                    Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.JobDetailActivity.class);
+                    intent.putExtra("JOB_ID", job.getId());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(requireContext(), "Liên hệ: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onSaveClick(JobEntity job) {
-                // Handle save click
                 Toast.makeText(requireContext(), "Đã lưu: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
         }, databaseHelper);
@@ -112,12 +126,22 @@ public class HomeBodyFragment extends Fragment {
         recommendedJobsAdapter = new JobAdapter(recommendedJobs, new JobAdapter.OnJobClickListener() {
             @Override
             public void onJobClick(JobEntity job) {
-                Toast.makeText(requireContext(), "Clicked: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                // Navigate to JobDetailActivity
+                Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.JobDetailActivity.class);
+                intent.putExtra("JOB_ID", job.getId());
+                startActivity(intent);
             }
 
             @Override
             public void onContactClick(JobEntity job) {
-                Toast.makeText(requireContext(), "Liên hệ: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                // Handle contact click for job seeking posts
+                if ("JOB_SEEKING".equals(job.getPostType())) {
+                    Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.JobDetailActivity.class);
+                    intent.putExtra("JOB_ID", job.getId());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(requireContext(), "Liên hệ: " + job.getTitle(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -125,6 +149,7 @@ public class HomeBodyFragment extends Fragment {
                 Toast.makeText(requireContext(), "Đã lưu: " + job.getTitle(), Toast.LENGTH_SHORT).show();
             }
         }, databaseHelper);
+
         rvRecommendedJobs.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         rvRecommendedJobs.setAdapter(recommendedJobsAdapter);
 
@@ -138,7 +163,12 @@ public class HomeBodyFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(this::refreshData);
 
         // Post job button
-        fabPostJob.setOnClickListener(v -> handlePostJob());
+        if (fabPostJob != null) {
+            fabPostJob.setOnClickListener(v -> handlePostJob());
+        }
+        if (btnPostJob != null) {
+            btnPostJob.setOnClickListener(v -> handlePostJob());
+        }
 
         // Filter button
         btnShowFilters.setOnClickListener(v -> showFilterDialog());
@@ -241,19 +271,21 @@ public class HomeBodyFragment extends Fragment {
     }
 
     private void handlePostJob() {
+        Toast.makeText(requireContext(), "Nút đăng tin được nhấn", Toast.LENGTH_SHORT).show();
+        
         if (!sessionManager.isLoggedIn()) {
             Toast.makeText(requireContext(), "Vui lòng đăng nhập để đăng bài", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // For now, assume users have post quota (this can be improved by fetching from database)
-        // TODO: Implement proper quota check by fetching user data from database
-        String userRole = sessionManager.getRole();
-        if ("EMPLOYER".equals(userRole)) {
-            // Navigate to post job activity
-            Toast.makeText(requireContext(), "Chuyển đến trang đăng bài", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(requireContext(), "Chỉ nhà tuyển dụng mới có thể đăng bài", Toast.LENGTH_SHORT).show();
+        try {
+            // Navigate to post type selection activity
+            Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.PostTypeSelectionActivity.class);
+            startActivityForResult(intent, 1001);
+            Toast.makeText(requireContext(), "Đang chuyển trang...", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Lỗi chuyển trang: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 
@@ -340,6 +372,16 @@ public class HomeBodyFragment extends Fragment {
             } else {
                 Toast.makeText(requireContext(), "Cần quyền truy cập vị trí để hiển thị việc làm gần bạn", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == getActivity().RESULT_OK) {
+            // Refresh data after successful post creation
+            refreshData();
+            Toast.makeText(requireContext(), "Bài đăng đã được tạo thành công!", Toast.LENGTH_SHORT).show();
         }
     }
 }

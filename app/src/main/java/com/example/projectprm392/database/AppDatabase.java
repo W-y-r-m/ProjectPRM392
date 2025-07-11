@@ -6,12 +6,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
 
-@Database(entities = {UserEntity.class, JobEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {UserEntity.class, JobEntity.class, ApplicationEntity.class, PostHistoryEntity.class}, version = 6, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract JobDao jobDao();
-    
+    public abstract ApplicationDao applicationDao();
+    public abstract PostHistoryDao postHistoryDao();
+
     private static volatile AppDatabase INSTANCE;
     
     public static AppDatabase getDatabase(final Context context) {
@@ -21,7 +23,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "app_database")
                             .allowMainThreadQueries() // Chỉ cho development, production nên dùng async
-                            .fallbackToDestructiveMigration()
+                            .fallbackToDestructiveMigration() // Reset database when schema changes
                             .build();
                 }
             }

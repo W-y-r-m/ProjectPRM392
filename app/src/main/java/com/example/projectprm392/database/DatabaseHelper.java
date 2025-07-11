@@ -14,18 +14,24 @@ public class DatabaseHelper {
     private AppDatabase database;
     private UserDao userDao;
     private JobDao jobDao;
+    private ApplicationDao applicationDao;
     private ExecutorService executor;
 
     public DatabaseHelper(Context context) {
         database = AppDatabase.getDatabase(context);
         userDao = database.userDao();
         jobDao = database.jobDao();
+        applicationDao = database.applicationDao();
         executor = Executors.newFixedThreadPool(4);
     }
 
     // User methods
     public UserEntity getUserById(int userId) {
         return userDao.getById(userId);
+    }
+
+    public UserEntity getUserById(String userId) {
+        return userDao.getByUserId(userId);
     }
 
     public UserEntity getUserByEmail(String email) {
@@ -45,14 +51,16 @@ public class DatabaseHelper {
         return userDao.insert(entity);
     }
 
-    public void updateUser(User user) {
+    public boolean updateUser(User user) {
         UserEntity entity = convertUserToEntity(user);
         // Cần có ID để update
-        UserEntity existingEntity = userDao.getByEmail(user.getEmail());
+        UserEntity existingEntity = userDao.getByUserId(user.getUserId().toString());
         if (existingEntity != null) {
             entity.setId(existingEntity.getId());
             userDao.update(entity);
+            return true;
         }
+        return false;
     }
 
     public void deleteUser(String email) {
@@ -74,43 +82,57 @@ public class DatabaseHelper {
     public UserEntity convertUserToEntity(User user) {
         if (user == null) return null;
 
-        UserEntity entity = new UserEntity();
-        entity.setUserId(user.getUserId() != null ? user.getUserId().toString() : UUID.randomUUID().toString());
-        entity.setEmail(user.getEmail());
-        entity.setPassword(user.getPassword());
-        entity.setFullName(user.getFullName());
-        entity.setGender(user.getGender());
-        entity.setRole(user.getRole());
-        entity.setLevelOfViolation(user.getLevelOfViolation());
-        entity.setDescription(user.getDescription());
-        entity.setPostQuota(user.getPostQuota());
-        entity.setCurrentLatitude(user.getCurrentLatitude());
-        entity.setCurrentLongitude(user.getCurrentLongitude());
-        entity.setCreatedAt(user.getCreatedAt());
-        entity.setIsActive(user.getIsActive());
+        try {
+            UserEntity entity = new UserEntity();
+            entity.setUserId(user.getUserId() != null ? user.getUserId().toString() : UUID.randomUUID().toString());
+            entity.setEmail(user.getEmail());
+            entity.setPassword(user.getPassword());
+            entity.setFullName(user.getFullName());
+            entity.setPhoneNumber(user.getPhoneNumber()); // This can be null and it's OK
+            entity.setGender(user.getGender());
+            entity.setRole(user.getRole());
+            entity.setLevelOfViolation(user.getLevelOfViolation());
+            entity.setDescription(user.getDescription());
+            entity.setPostQuota(user.getPostQuota());
+            entity.setCurrentLatitude(user.getCurrentLatitude());
+            entity.setCurrentLongitude(user.getCurrentLongitude());
+            entity.setCreatedAt(user.getCreatedAt());
+            entity.setIsActive(user.getIsActive());
 
-        return entity;
+            return entity;
+        } catch (Exception e) {
+            System.err.println("Error converting user to entity: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public User convertEntityToUser(UserEntity entity) {
         if (entity == null) return null;
 
-        User user = new User();
-        user.setUserId(UUID.fromString(entity.getUserId()));
-        user.setEmail(entity.getEmail());
-        user.setPassword(entity.getPassword());
-        user.setFullName(entity.getFullName());
-        user.setGender(entity.getGender());
-        user.setRole(entity.getRole());
-        user.setLevelOfViolation(entity.getLevelOfViolation());
-        user.setDescription(entity.getDescription());
-        user.setPostQuota(entity.getPostQuota());
-        user.setCurrentLatitude(entity.getCurrentLatitude());
-        user.setCurrentLongitude(entity.getCurrentLongitude());
-        user.setCreatedAt(entity.getCreatedAt());
-        user.setIsActive(entity.getIsActive());
+        try {
+            User user = new User();
+            user.setUserId(UUID.fromString(entity.getUserId()));
+            user.setEmail(entity.getEmail());
+            user.setPassword(entity.getPassword());
+            user.setFullName(entity.getFullName());
+            user.setPhoneNumber(entity.getPhoneNumber()); // This can be null and it's OK
+            user.setGender(entity.getGender());
+            user.setRole(entity.getRole());
+            user.setLevelOfViolation(entity.getLevelOfViolation());
+            user.setDescription(entity.getDescription());
+            user.setPostQuota(entity.getPostQuota());
+            user.setCurrentLatitude(entity.getCurrentLatitude());
+            user.setCurrentLongitude(entity.getCurrentLongitude());
+            user.setCreatedAt(entity.getCreatedAt());
+            user.setIsActive(entity.getIsActive());
 
-        return user;
+            return user;
+        } catch (Exception e) {
+            System.err.println("Error converting entity to user: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Initialize với dữ liệu mẫu
@@ -119,6 +141,7 @@ public class DatabaseHelper {
         if (userDao.getAll().isEmpty()) {
             // Tạo user mẫu
             User worker1 = new User("nguyenvana@gmail.com", "123456", "Nguyễn Văn A", "WORKER");
+            worker1.setPhoneNumber("0909123456");
             worker1.setGender(true);
             worker1.setDescription("Tôi có kinh nghiệm làm việc phục vụ bàn, giao hàng và bán hàng");
             worker1.setCurrentLatitude(21.0285);
@@ -126,6 +149,7 @@ public class DatabaseHelper {
             worker1.setCreatedAt(new Date());
 
             User worker2 = new User("tranthib@gmail.com", "123456", "Trần Thị B", "WORKER");
+            worker2.setPhoneNumber("0909234567");
             worker2.setGender(false);
             worker2.setDescription("Sinh viên năm 3, tìm việc làm thêm cuối tuần");
             worker2.setCurrentLatitude(21.0245);
@@ -133,6 +157,7 @@ public class DatabaseHelper {
             worker2.setCreatedAt(new Date());
 
             User worker3 = new User("lehoanc@gmail.com", "123456", "Lê Hoàn C", "WORKER");
+            worker3.setPhoneNumber("0909345678");
             worker3.setGender(true);
             worker3.setDescription("Có bằng lái xe máy, kinh nghiệm giao hàng 2 năm");
             worker3.setCurrentLatitude(21.0325);
@@ -140,6 +165,7 @@ public class DatabaseHelper {
             worker3.setCreatedAt(new Date());
 
             User employer1 = new User("cafehanoi@gmail.com", "123456", "Cafe Hà Nội", "EMPLOYER");
+            employer1.setPhoneNumber("0909456789");
             employer1.setGender(null);
             employer1.setDescription("Chuỗi cafe cần tuyển nhân viên phục vụ");
             employer1.setCurrentLatitude(21.0285);
@@ -148,6 +174,7 @@ public class DatabaseHelper {
             employer1.setCreatedAt(new Date());
 
             User employer2 = new User("shoponline@gmail.com", "123456", "Shop Online ABC", "EMPLOYER");
+            employer2.setPhoneNumber("0909567890");
             employer2.setGender(null);
             employer2.setDescription("Shop thời trang online cần shipper giao hàng");
             employer2.setCurrentLatitude(21.0195);
@@ -156,6 +183,7 @@ public class DatabaseHelper {
             employer2.setCreatedAt(new Date());
 
             User employer3 = new User("nhahangtuan@gmail.com", "123456", "Nhà Hàng Tuấn", "EMPLOYER");
+            employer3.setPhoneNumber("0909678901");
             employer3.setGender(null);
             employer3.setDescription("Nhà hàng gia đình cần nhân viên bán thời gian");
             employer3.setCurrentLatitude(21.0355);
@@ -294,6 +322,7 @@ public class DatabaseHelper {
         job.setWorkingTime(workingTime);
         job.setLocationLatitude(latitude);
         job.setLocationLongitude(longitude);
+        job.setPostType("JOB_POSTING"); // Set default post type for existing jobs
         job.setStatus("ACTIVE");
         job.setCreatedAt(new Date());
         job.setIsActive(true);
@@ -342,6 +371,79 @@ public class DatabaseHelper {
     public void deleteJob(JobEntity job) {
         jobDao.delete(job);
     }
+
+    // Application methods
+    public List<ApplicationEntity> getAllApplications() {
+        return applicationDao.getAllApplications();
+    }
+
+    public List<ApplicationEntity> getApplicationsByUserId(int userId) {
+        return applicationDao.getApplicationsByUserId(userId);
+    }
+
+    public List<ApplicationEntity> getApplicationsByJobId(int jobId) {
+        return applicationDao.getApplicationsByJobId(jobId);
+    }
+
+    public List<ApplicationEntity> getApplicationsByStatus(String status) {
+        return applicationDao.getApplicationsByStatus(status);
+    }
+
+    public ApplicationEntity getApplicationById(int id) {
+        return applicationDao.getApplicationById(id);
+    }
+
+    public void insertApplication(ApplicationEntity application) {
+        applicationDao.insert(application);
+    }
+
+    public void updateApplication(ApplicationEntity application) {
+        applicationDao.update(application);
+    }
+
+    public void deleteApplication(ApplicationEntity application) {
+        applicationDao.delete(application);
+    }
+
+    public void createSampleApplications() {
+        List<UserEntity> users = getUsersByRole("WORKER");
+        List<JobEntity> jobs = getAllJobs();
+
+        if (!users.isEmpty() && !jobs.isEmpty()) {
+            UserEntity worker1 = users.get(0);
+            UserEntity worker2 = users.get(1);
+            UserEntity worker3 = users.get(2);
+
+            // Worker 1 ứng tuyển 2 job
+            insertApplication(createApplication(worker1, jobs.get(0), "Em có kinh nghiệm phục vụ bàn."));
+            insertApplication(createApplication(worker1, jobs.get(1), "Em rất đam mê pha chế đồ uống."));
+
+            // Worker 2 ứng tuyển 1 job
+            insertApplication(createApplication(worker2, jobs.get(2), "Em có thể giao hàng vào cuối tuần."));
+
+            // Worker 3 ứng tuyển 2 job
+            insertApplication(createApplication(worker3, jobs.get(3), "Em từng làm đóng gói 6 tháng."));
+            insertApplication(createApplication(worker3, jobs.get(4), "Em thích làm việc với khách hàng."));
+        }
+    }
+
+    private ApplicationEntity createApplication(UserEntity user, JobEntity job, String message) {
+        String applicationId = UUID.randomUUID().toString();
+        long now = new Date().getTime();
+
+        return new ApplicationEntity(
+                0, // ID auto-generate
+                applicationId,
+                job.getId(),
+                user.getId(),
+                message,
+                null,
+                "pending",
+                null,
+                now
+        );
+    }
+
 
     public void close() {
         if (executor != null) {

@@ -53,6 +53,9 @@ public class JobEntity {
     @ColumnInfo(name = "location_longitude")
     private Double locationLongitude;
     
+    @ColumnInfo(name = "post_type")
+    private String postType; // JOB_SEEKING or JOB_POSTING
+    
     @ColumnInfo(name = "status")
     private String status;
     
@@ -68,7 +71,7 @@ public class JobEntity {
     public JobEntity(String jobId, int userId, String title, String description, 
                     String salary, String location, String jobType, String experienceLevel,
                     int neededAmount, String workingTime, Double locationLatitude, 
-                    Double locationLongitude, String status, Date createdAt, Boolean isActive) {
+                    Double locationLongitude, String postType, String status, Date createdAt, Boolean isActive) {
         this.jobId = jobId;
         this.userId = userId;
         this.title = title;
@@ -81,6 +84,7 @@ public class JobEntity {
         this.workingTime = workingTime;
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
+        this.postType = postType;
         this.status = status;
         this.createdAt = createdAt;
         this.isActive = isActive;
@@ -193,6 +197,14 @@ public class JobEntity {
 
     public void setLocationLongitude(Double locationLongitude) {
         this.locationLongitude = locationLongitude;
+    }
+
+    public String getPostType() {
+        return postType;
+    }
+
+    public void setPostType(String postType) {
+        this.postType = postType;
     }
 
     public String getStatus() {
