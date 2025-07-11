@@ -8,23 +8,10 @@ import androidx.room.ForeignKey;
 
 import java.util.UUID;
 
-@Entity(
-        tableName = "applications",
-        foreignKeys = {
-                @ForeignKey(
-                        entity = JobEntity.class,
-                        parentColumns = "id",
-                        childColumns = "jobId",
-                        onDelete = ForeignKey.CASCADE
-                ),
-                @ForeignKey(
-                        entity = UserEntity.class,
-                        parentColumns = "id",
-                        childColumns = "userId",
-                        onDelete = ForeignKey.CASCADE
-                )
-        }
-)
+@Entity(tableName = "applications", foreignKeys = {
+        @ForeignKey(entity = JobEntity.class, parentColumns = "id", childColumns = "jobId", onDelete = ForeignKey.CASCADE),
+        @ForeignKey(entity = UserEntity.class, parentColumns = "id", childColumns = "userId", onDelete = ForeignKey.CASCADE)
+})
 public class ApplicationEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -54,7 +41,15 @@ public class ApplicationEntity {
     @ColumnInfo(name = "appliedAt")
     private long appliedAt;
 
-    public ApplicationEntity(int id, @NonNull String applicationId, int jobId, int userId, String message, String otherFileUrl, String status, String reply, long appliedAt) {
+    // Default constructor required by Room
+    public ApplicationEntity() {
+        this.applicationId = UUID.randomUUID().toString();
+        this.status = "PENDING";
+        this.appliedAt = System.currentTimeMillis();
+    }
+
+    public ApplicationEntity(int id, @NonNull String applicationId, int jobId, int userId, String message,
+            String otherFileUrl, String status, String reply, long appliedAt) {
         this.id = id;
         this.applicationId = applicationId;
         this.jobId = jobId;
