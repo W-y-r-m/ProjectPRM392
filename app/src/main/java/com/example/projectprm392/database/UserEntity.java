@@ -23,6 +23,9 @@ public class UserEntity {
     @ColumnInfo(name = "full_name")
     private String fullName;
     
+    @ColumnInfo(name = "phone_number")
+    private String phoneNumber;
+    
     @ColumnInfo(name = "gender")
     private Boolean gender;
     
@@ -63,7 +66,7 @@ public class UserEntity {
     public UserEntity() {}
 
     public UserEntity(String userId, String email, String password, String fullName, 
-                     Boolean gender, String role, String levelOfViolation, String description, 
+                     String phoneNumber, Boolean gender, String role, String levelOfViolation, String description, 
                      Integer postQuota, Double currentLatitude, Double currentLongitude, 
                      Date createdAt, Boolean isActive, boolean isVerified, String verificationCode, 
                      Date verificationCodeExpiresAt) {
@@ -71,6 +74,7 @@ public class UserEntity {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.role = role;
         this.levelOfViolation = levelOfViolation;
@@ -124,6 +128,14 @@ public class UserEntity {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public Boolean getGender() {
