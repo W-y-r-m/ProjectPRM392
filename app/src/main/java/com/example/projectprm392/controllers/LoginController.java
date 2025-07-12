@@ -83,9 +83,8 @@ public class LoginController {
             return;
         }
 
-        // Hash password trước khi gửi request
-        String hashedPassword = ValidationUtils.hashPassword(password);
-        LoginRequest request = new LoginRequest(email, hashedPassword);
+        // Sử dụng plain text password
+        LoginRequest request = new LoginRequest(email, password);
         
         // Sử dụng SQLite Database
         executorService.execute(() -> {
@@ -138,10 +137,7 @@ public class LoginController {
         // Sử dụng SQLite Database
         executorService.execute(() -> {
             try {
-                // Hash password trước khi lưu
-                String hashedPassword = ValidationUtils.hashPassword(user.getPassword());
-                user.setPassword(hashedPassword);
-                
+                // Không hash password - sử dụng plain text
                 LoginResponse response = databaseApiService.register(user);
                 
                 mainHandler.post(() -> {
@@ -309,9 +305,8 @@ public class LoginController {
     public void updatePassword(String email, String newPassword, UpdatePasswordCallback callback) {
         executorService.execute(() -> {
             try {
-                // Hash password trước khi lưu
-                String hashedPassword = ValidationUtils.hashPassword(newPassword);
-                boolean success = databaseApiService.updatePassword(email, hashedPassword);
+                // Sử dụng plain text password
+                boolean success = databaseApiService.updatePassword(email, newPassword);
                 
                 mainHandler.post(() -> {
                     if (success) {

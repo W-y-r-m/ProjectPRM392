@@ -28,8 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout tilFullName, tilEmail, tilPassword, tilDescription;
     private TextInputEditText etFullName, etEmail, etPassword, etDescription;
-    private RadioGroup rgGender, rgRole;
-    private RadioButton rbMale, rbFemale, rbWorker, rbEmployer;
+    private RadioGroup rgGender;
+    private RadioButton rbMale, rbFemale;
     private MaterialButton btnRegister;
     private ProgressBar progressBar;
     private TextView tvLoginLink;
@@ -57,11 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etDescription = findViewById(R.id.etDescription);
         rgGender = findViewById(R.id.rgGender);
-        rgRole = findViewById(R.id.rgRole);
         rbMale = findViewById(R.id.rbMale);
         rbFemale = findViewById(R.id.rbFemale);
-        rbWorker = findViewById(R.id.rbWorker);
-        rbEmployer = findViewById(R.id.rbEmployer);
         btnRegister = findViewById(R.id.btnRegister);
         progressBar = findViewById(R.id.progressBar);
         tvLoginLink = findViewById(R.id.tvLoginLink);
@@ -112,15 +109,8 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Check role selection
-        int selectedRoleId = rgRole.getCheckedRadioButtonId();
-        if (selectedRoleId == -1) {
-            Toast.makeText(this, "Vui lòng chọn vai trò", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Create user object
-        User user = createUserFromInput(fullName, email, password, description, selectedGenderId, selectedRoleId);
+        // Create user object with default role "worker"
+        User user = createUserFromInput(fullName, email, password, description, selectedGenderId);
 
         showLoading(true);
 
@@ -251,7 +241,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
     
     private User createUserFromInput(String fullName, String email, String password, String description, 
-                                    int selectedGenderId, int selectedRoleId) {
+                                    int selectedGenderId) {
         User user = new User();
         user.setFullName(fullName);
         user.setEmail(email.toLowerCase()); // Normalize email to lowercase
@@ -261,9 +251,11 @@ public class RegisterActivity extends AppCompatActivity {
         // Set gender
         user.setGender(selectedGenderId == R.id.rbMale);
 
-        // Set role
-        String role = selectedRoleId == R.id.rbWorker ? "worker" : "employer";
-        user.setRole(role);
+        // Set default role as worker
+        user.setRole("worker");
+        
+        // Set default post quota to 0
+        user.setPostQuota(0);
         
         // Set initial verification status
         user.setVerified(false);

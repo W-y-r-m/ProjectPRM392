@@ -29,7 +29,9 @@ public class User {
         this.createdAt = new Date();
         this.isActive = true;
         this.levelOfViolation = "NONE";
-        this.postQuota = 20; // Default post quota > 15
+
+        this.postQuota = 0; // Default post quota changed to 0
+
     }
 
     public User(String email, String password, String fullName, String role) {
