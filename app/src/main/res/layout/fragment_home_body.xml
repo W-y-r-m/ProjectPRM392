@@ -63,16 +63,22 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnViewJobHistory"
-                        style="@style/Widget.MaterialComponents.Button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:minWidth="64dp"
                         android:minHeight="48dp"
-                        android:text="Lịch sử đăng Job"
+                        android:text="Post"
                         android:textSize="12sp"
-                        android:backgroundTint="#4CAF50"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="#4267B2"
+                        app:strokeColor="#4267B2"
+                        app:strokeWidth="1dp"
                         app:cornerRadius="18dp"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="8dp"
+                        app:icon="@android:drawable/ic_popup_sync"
+                        app:iconGravity="textStart"
+                        app:iconPadding="8dp" />
 
                 </LinearLayout>
 

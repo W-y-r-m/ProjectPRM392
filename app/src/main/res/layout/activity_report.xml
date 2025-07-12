@@ -2,31 +2,37 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/background_report">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp">
-
-
         <!-- Nút quay về -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBackReport"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="← Quay về"
-            android:backgroundTint="#4267B2"
-            android:textColor="#FFFFFF"
+            android:layout_height="48dp"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:icon="@drawable/ic_arrow_back"
+            android:iconTint="@color/colorPrimaryDark"
+            android:text="Quay về"
+            android:contentDescription="Nút quay về"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:backgroundTint="@android:color/transparent"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Gửi báo cáo người dùng"
             android:textSize="22sp"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
             android:paddingBottom="20dp" />
@@ -37,15 +43,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chọn người dùng cần report:"
-            android:textColor="#333"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="8dp" />
         <Spinner
             android:id="@+id/spinnerUser"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
+            android:layout_height="48dp"
+            android:minHeight="48dp"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
 
         <!-- Chọn job của user đó -->
@@ -53,21 +62,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chọn job muốn report (có thể bỏ trống):"
-            android:textColor="#333"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="12dp" />
         <Spinner
             android:id="@+id/spinnerJob"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
+            android:layout_height="48dp"
+            android:minHeight="48dp"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nội dung báo cáo"
-            android:textColor="#333"
+            android:textColor="@color/colorPrimary"
             android:textSize="15sp"
             android:layout_marginTop="12dp" />
         <com.google.android.material.textfield.TextInputLayout
@@ -81,16 +93,15 @@
                 android:gravity="top" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSendReport"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Gửi báo cáo"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#4267B2"
-            android:textColor="#fff"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
             android:textStyle="bold" />
 
     </LinearLayout>
-
 </ScrollView>
