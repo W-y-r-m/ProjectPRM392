@@ -1,5 +1,6 @@
 package com.example.projectprm392.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ public class HeaderFragment extends Fragment {
     private ImageView ivNotification;
     private ImageView ivProfile;
     private MaterialButton btnLogin;
+    private static final int PROFILE_REQUEST_CODE = 1001;
+
     private TextView tvUserName;
     private ImageView ivUserMenu;
     private LoginController loginController;
@@ -133,7 +136,7 @@ public class HeaderFragment extends Fragment {
             } else if (id == R.id.menu_profile) {
                 // Navigate to profile
                 Intent intent = new Intent(requireContext(), ProfileActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, PROFILE_REQUEST_CODE);
                 return true;
             } else if (id == R.id.menu_history) {
                 // Navigate to history
@@ -178,5 +181,14 @@ public class HeaderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         updateUI();
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Profile được update thành công, refresh UI
+            updateUI();
+        }
     }
 }

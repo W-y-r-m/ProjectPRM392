@@ -64,6 +64,37 @@ public class LoginController {
         this.sessionManager = new SessionManager(context);
         this.executorService = Executors.newCachedThreadPool();
         this.mainHandler = new Handler(Looper.getMainLooper());
+        
+        // Ensure database is initialized with sample data
+        ensureDatabaseInitialized();
+    }
+    
+    private void ensureDatabaseInitialized() {
+        executorService.execute(() -> {
+            try {
+                // Chỉ initialize một lần khi cần thiết
+                if (!isDatabaseInitialized()) {
+                    databaseApiService.initializeSampleData();
+                    Log.d(TAG, "Database initialization completed");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error initializing database: " + e.getMessage());
+            }
+        });
+    }
+    
+    private boolean isDatabaseInitialized() {
+        // Kiểm tra xem admin user đã tồn tại chưa
+        try {
+            return databaseApiService.getUserByEmail("admin@gmail.com") != null;
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking database initialization: " + e.getMessage());
+            return false;
+        }
+    }
+    
+    public void forceInitializeDatabase() {
+        ensureDatabaseInitialized();
     }
     
     public boolean isLoggedIn() {
@@ -342,6 +373,42 @@ public class LoginController {
             } catch (Exception e) {
                 Log.e(TAG, "Error getting user full name", e);
                 mainHandler.post(() -> callback.onError("Lỗi lấy thông tin user"));
+            }
+        });
+    }
+    
+    /**
+     * Admin đổi mật khẩu của user khác
+     */
+    public void adminChangeUserPassword(String userEmail, String newPassword, UpdatePasswordCallback callback) {
+        Log.d(TAG, "=== ADMIN CHANGE PASSWORD START ===");
+        Log.d(TAG, "Changing password for user: " + userEmail);
+        Log.d(TAG, "New password length: " + newPassword.length());
+        
+        executorService.execute(() -> {
+            try {
+                // Sử dụng plain text password
+                Log.d(TAG, "Calling databaseApiService.updatePassword");
+                boolean success = databaseApiService.updatePassword(userEmail, newPassword);
+                Log.d(TAG, "Password update result: " + success);
+                
+                mainHandler.post(() -> {
+                    if (success) {
+                        Log.d(TAG, "Password update successful, clearing verification code");
+                        // Clear verification code sau khi update thành công
+                        databaseApiService.clearVerificationCode(userEmail);
+                        Log.d(TAG, "=== ADMIN CHANGE PASSWORD END - SUCCESS ===");
+                        callback.onSuccess();
+                    } else {
+                        Log.e(TAG, "Password update failed");
+                        Log.d(TAG, "=== ADMIN CHANGE PASSWORD END - FAILED ===");
+                        callback.onError("Không thể cập nhật mật khẩu cho user");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error admin changing user password", e);
+                Log.d(TAG, "=== ADMIN CHANGE PASSWORD END - ERROR ===");
+                mainHandler.post(() -> callback.onError("Lỗi đổi mật khẩu user"));
             }
         });
     }

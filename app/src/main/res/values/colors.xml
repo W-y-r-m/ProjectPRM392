@@ -28,8 +28,32 @@
     
     <!-- Additional Colors -->
     <color name="colorBackground">#FFFFFF</color>
+    
+    <!-- Admin UI Colors -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_light">#E3F2FD</color>
+    <color name="background_light">#F8F9FA</color>
+    <color name="text_hint">#9E9E9E</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="error">#F44336</color>
+    <color name="success">#4CAF50</color>
+    
+    <!-- Status Indicator Colors -->
+    <color name="status_active">#4CAF50</color>
+    <color name="status_inactive">#F44336</color>
+    
+    <!-- Role Badge Colors -->
+    <color name="role_admin">#9C27B0</color>
+    <color name="role_employer">#FF9800</color>
+    <color name="role_worker">#2196F3</color>
+    
+    <!-- Verification Colors -->
+    <color name="verified">#4CAF50</color>
+    <color name="unverified">#FF9800</color>
+    
+    <!-- Material Design Colors -->
     <color name="colorSurface">#FFFFFF</color>
-    <color name="colorError">#B00020</color>
+    <color name="colorError">#F44336</color>
     
     <!-- Text Colors -->
     <color name="colorOnPrimary">#FFFFFF</color>

@@ -42,6 +42,12 @@ public class LoginActivity extends AppCompatActivity {
         // Debug: Check session vs database consistency
         LoginDebugHelper.debugSessionVsDatabase(this);
         
+        // Force database initialization (temporary for debugging) - DISABLED to prevent password reset
+        // forceInitializeDatabase();
+        
+        // Debug admin login specifically - DISABLED to prevent password reset  
+        // debugAdminLogin();
+        
         // Check if user is already logged in
         if (loginController.isLoggedIn()) {
             navigateToHomeActivity();
@@ -161,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToHomeActivity() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
@@ -218,5 +224,68 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+    
+    private void forceInitializeDatabase() {
+        // Force reset and initialize database with admin account
+        new Thread(() -> {
+            try {
+                android.util.Log.d("LoginActivity", "Force resetting database...");
+                
+                // Force reset database completely
+                com.example.projectprm392.utils.DatabaseUtils.resetDatabase(this);
+                
+                // Wait a bit
+                Thread.sleep(1500);
+                
+                android.util.Log.d("LoginActivity", "Force initializing database...");
+                loginController.forceInitializeDatabase();
+                
+                // Wait for initialization
+                Thread.sleep(1000);
+                
+                android.util.Log.d("LoginActivity", "Database reset and initialization completed");
+            } catch (Exception e) {
+                android.util.Log.e("LoginActivity", "Database reset failed: " + e.getMessage());
+            }
+        }).start();
+    }
+    
+    private void debugAdminLogin() {
+        new Thread(() -> {
+            try {
+                android.util.Log.d("LoginActivity", "=== DEBUGGING ADMIN LOGIN ===");
+                
+                // Wait a bit for database initialization
+                Thread.sleep(2000);
+                
+                com.example.projectprm392.database.DatabaseHelper db = 
+                    new com.example.projectprm392.database.DatabaseHelper(this);
+                
+                // Check users
+                java.util.List<com.example.projectprm392.database.UserEntity> allUsers = db.getAllUsers();
+                android.util.Log.d("LoginActivity", "Total users: " + allUsers.size());
+                
+                // Check admin specifically
+                com.example.projectprm392.database.UserEntity admin = db.getUserByEmail("admin@gmail.com");
+                if (admin != null) {
+                    android.util.Log.d("LoginActivity", "✅ Admin found: " + admin.getEmail() + " | Role: " + admin.getRole());
+                } else {
+                    android.util.Log.e("LoginActivity", "❌ Admin NOT found");
+                }
+                
+                // Test login
+                com.example.projectprm392.database.UserEntity loginTest = 
+                    db.getUserByEmailAndPassword("admin@gmail.com", "123456");
+                if (loginTest != null) {
+                    android.util.Log.d("LoginActivity", "✅ Login test SUCCESS");
+                } else {
+                    android.util.Log.e("LoginActivity", "❌ Login test FAILED");
+                }
+                
+            } catch (Exception e) {
+                android.util.Log.e("LoginActivity", "Debug error: " + e.getMessage());
+            }
+        }).start();
     }
 }

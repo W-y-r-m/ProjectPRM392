@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_edit_user"
+        android:title="Sửa thông tin" />
+    <item
+        android:id="@+id/action_change_password"
+        android:title="Đổi mật khẩu" />
+    <item
+        android:id="@+id/action_toggle_status"
+        android:title="Khóa/Mở khóa" />
+    <item
+        android:id="@+id/action_delete_user"
+        android:title="Xóa người dùng" />
+</menu>

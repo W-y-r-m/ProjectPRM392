@@ -262,7 +262,7 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
             public void onSuccess(User user) {
                 runOnUiThread(() -> {
                     Toast.makeText(ProfileActivity.this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-                    // Update session manager
+                    // Update session manager với thông tin mới
                     sessionManager.saveUserSession(
                             user.getUserId().toString(),
                             user.getEmail(),
@@ -270,6 +270,9 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
                             user.getRole(),
                             sessionManager.getToken()
                     );
+                    
+                    // Đặt result để báo cho parent activity biết đã update thành công
+                    setResult(RESULT_OK);
                     finish();
                 });
             }

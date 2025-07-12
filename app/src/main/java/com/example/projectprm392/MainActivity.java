@@ -15,14 +15,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.projectprm392.activities.HomeActivity;
+import com.example.projectprm392.activities.admin.AdminDashboardActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.models.User;
+import com.example.projectprm392.utils.SessionManager;
 import com.example.projectprm392.views.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
 
     private LoginController loginController;
+    private SessionManager sessionManager;
     private TextView tvWelcome;
     private MaterialButton btnLogout;
     private Toolbar toolbar;
@@ -44,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
         setupController();
         checkLoginStatus();
         
-        // Redirect to HomeActivity for better user experience
-        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-        startActivity(intent);
-        finish();
+        // Check user role and redirect accordingly
+        redirectToAppropriateActivity();
     }
 
     private void initViews() {
@@ -65,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupController() {
         loginController = new LoginController(this);
+        sessionManager = new SessionManager(this);
     }
 
-    private void checkLoginStatus() {
+    private void redirectToAppropriateActivity() {
         if (!loginController.isLoggedIn()) {
             // User not logged in, redirect to login
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -76,11 +78,33 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Get user role from session
+        String userRole = sessionManager.getRole();
+        
+        if ("ADMIN".equals(userRole) || "admin".equals(userRole)) {
+            // Redirect to Admin Dashboard
+            Intent intent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // Redirect to HomeActivity for regular users
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void checkLoginStatus() {
+        if (!loginController.isLoggedIn()) {
+            return; // Will be handled in redirectToAppropriateActivity
+        }
+
         // User is logged in, display welcome message
         User currentUser = loginController.getCurrentUser();
         if (currentUser != null) {
             String welcomeMessage = "Chào mừng, " + currentUser.getFullName() + "!\nVai trò: " + 
-                (currentUser.getRole().equals("worker") ? "Người lao động" : "Nhà tuyển dụng");
+                (currentUser.getRole().equals("worker") ? "Người lao động" : 
+                 currentUser.getRole().equals("employer") ? "Nhà tuyển dụng" : "Quản trị viên");
             tvWelcome.setText(welcomeMessage);
         }
     }

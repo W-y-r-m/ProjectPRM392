@@ -10,6 +10,9 @@ import java.util.List;
 
 @Dao
 public interface JobDao {
+    @Query("SELECT * FROM jobs ORDER BY created_at DESC")
+    List<JobEntity> getAll();
+    
     @Query("SELECT * FROM jobs WHERE is_active = 1 ORDER BY created_at DESC")
     List<JobEntity> getAllActiveJobs();
     

@@ -211,4 +211,11 @@ public class DatabaseApiService {
             return null;
         }
     }
+    
+    /**
+     * Public method to force initialize sample data
+     */
+    public void initializeSampleData() {
+        databaseHelper.initializeSampleData();
+    }
 }

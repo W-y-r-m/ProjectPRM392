@@ -132,6 +132,37 @@
             android:name=".views.ResetPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Admin Dashboard Activity -->
+        <activity
+            android:name=".activities.admin.AdminDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Admin User Management Activity -->
+        <activity
+            android:name=".activities.admin.AdminUserManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.admin.AdminDashboardActivity"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Admin Job Management Activity -->
+        <activity
+            android:name=".activities.admin.AdminJobManagementActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Admin Report Management Activity -->
+        <activity
+            android:name=".activities.admin.AdminReportManagementActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Admin Application Management Activity -->
+        <activity
+            android:name=".activities.admin.AdminApplicationManagementActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
     </application>
 
 </manifest>
