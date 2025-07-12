@@ -155,6 +155,7 @@ public class DatabaseHelper {
             testWorker.setDescription("Test worker account");
             testWorker.setCurrentLatitude(21.0285);
             testWorker.setCurrentLongitude(105.8542);
+            testWorker.setPostQuota(0); // Worker has 0 post quota
             testWorker.setCreatedAt(new Date());
             testWorker.setVerified(true); // Pre-verified for testing
             
@@ -177,6 +178,7 @@ public class DatabaseHelper {
             worker1.setDescription("Tôi có kinh nghiệm làm việc phục vụ bàn, giao hàng và bán hàng");
             worker1.setCurrentLatitude(21.0285);
             worker1.setCurrentLongitude(105.8542);
+            worker1.setPostQuota(0); // Worker has 0 post quota
             worker1.setCreatedAt(new Date());
 
             User worker2 = new User("tranthib@gmail.com", "123456", "Trần Thị B", "WORKER");
@@ -184,6 +186,7 @@ public class DatabaseHelper {
             worker2.setDescription("Sinh viên năm 3, tìm việc làm thêm cuối tuần");
             worker2.setCurrentLatitude(21.0245);
             worker2.setCurrentLongitude(105.8412);
+            worker2.setPostQuota(0); // Worker has 0 post quota
             worker2.setCreatedAt(new Date());
 
             User worker3 = new User("lehoanc@gmail.com", "123456", "Lê Hoàn C", "WORKER");
@@ -191,6 +194,7 @@ public class DatabaseHelper {
             worker3.setDescription("Có bằng lái xe máy, kinh nghiệm giao hàng 2 năm");
             worker3.setCurrentLatitude(21.0325);
             worker3.setCurrentLongitude(105.8485);
+            worker3.setPostQuota(0); // Worker has 0 post quota
             worker3.setCreatedAt(new Date());
 
             User employer1 = new User("cafehanoi@gmail.com", "123456", "Cafe Hà Nội", "EMPLOYER");
