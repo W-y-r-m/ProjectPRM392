@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectprm392.R;
-import com.example.projectprm392.adapters.JobManagementAdapter;
+import com.example.projectprm392.adapters.admin.JobManagementAdapter;
 import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.JobEntity;
 import com.example.projectprm392.database.UserEntity;

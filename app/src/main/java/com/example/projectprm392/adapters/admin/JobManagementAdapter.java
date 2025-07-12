@@ -1,4 +1,4 @@
-package com.example.projectprm392.adapters;
+package com.example.projectprm392.adapters.admin;
 
 import android.view.LayoutInflater;
 import android.view.View;
