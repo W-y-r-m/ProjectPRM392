@@ -15,6 +15,7 @@ import com.example.projectprm392.R;
 import com.example.projectprm392.activities.HomeActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.viewmodels.LoginResponse;
+import com.example.projectprm392.utils.LoginDebugHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -37,6 +38,9 @@ public class LoginActivity extends AppCompatActivity {
         initViews();
         setupController();
         setupListeners();
+        
+        // Debug: Check session vs database consistency
+        LoginDebugHelper.debugSessionVsDatabase(this);
         
         // Check if user is already logged in
         if (loginController.isLoggedIn()) {
@@ -112,6 +116,9 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         showLoading(true);
+
+        // Debug: Check login credentials and database state
+        LoginDebugHelper.debugLoginIssue(this, email, password);
 
         loginController.login(email, password, new LoginController.LoginCallback() {
             @Override
