@@ -22,6 +22,12 @@ public class Job {
     private JobStatus status;
     private Timestamp createdAt;
     private Boolean isDeleted;
+    
+    // Thêm trường để phân biệt job posting và job seeking
+    private JobType jobType;
+    private JobCategory category;
+    private JobLevel level;
+    private String locationAddress; // Địa chỉ text để hiển thị
 
     public enum SalaryUnit {
         HOUR("hour"),
@@ -55,6 +61,77 @@ public class Job {
         }
     }
 
+    public enum JobType {
+        JOB_POSTING("job_posting"),  // Đăng tin tuyển dụng
+        JOB_SEEKING("job_seeking");  // Đăng tin tìm việc
+
+        private final String value;
+
+        JobType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public enum JobCategory {
+        TECHNOLOGY("technology"),
+        MARKETING("marketing"),
+        SALES("sales"),
+        FINANCE("finance"),
+        HUMAN_RESOURCES("human_resources"),
+        OPERATIONS("operations"),
+        CUSTOMER_SERVICE("customer_service"),
+        DESIGN("design"),
+        EDUCATION("education"),
+        HEALTHCARE("healthcare"),
+        CONSTRUCTION("construction"),
+        HOSPITALITY("hospitality"),
+        TRANSPORTATION("transportation"),
+        RETAIL("retail"),
+        MANUFACTURING("manufacturing"),
+        AGRICULTURE("agriculture"),
+        MEDIA("media"),
+        LEGAL("legal"),
+        CONSULTING("consulting"),
+        OTHER("other");
+
+        private final String value;
+
+        JobCategory(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public enum JobLevel {
+        ENTRY_LEVEL("entry_level"),
+        JUNIOR("junior"),
+        MID_LEVEL("mid_level"),
+        SENIOR("senior"),
+        LEAD("lead"),
+        MANAGER("manager"),
+        DIRECTOR("director"),
+        EXECUTIVE("executive"),
+        INTERNSHIP("internship"),
+        FREELANCE("freelance");
+
+        private final String value;
+
+        JobLevel(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     // Constructors
     public Job() {
         this.jobId = UUID.randomUUID();
@@ -70,6 +147,37 @@ public class Job {
         this.description = description;
         this.salary = salary;
         this.salaryUnit = salaryUnit;
+    }
+
+    // Constructor cho job seeking (tìm việc)
+    public Job(UUID userId, String title, String description, Integer neededAmount, JobType jobType) {
+        this();
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.neededAmount = neededAmount != null ? neededAmount : 1; // Mặc định là 1 nếu null
+        this.jobType = jobType;
+    }
+
+    // Constructor cho job posting (tuyển dụng)
+    public Job(UUID userId, String title, String description, BigDecimal salary, SalaryUnit salaryUnit, 
+              JobCategory category, JobLevel level, Time startTime, Time endTime, Date workingDate, 
+              Double locationLatitude, Double locationLongitude, String locationAddress) {
+        this();
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.salary = salary;
+        this.salaryUnit = salaryUnit;
+        this.category = category;
+        this.level = level;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.workingDate = workingDate;
+        this.locationLatitude = locationLatitude;
+        this.locationLongitude = locationLongitude;
+        this.locationAddress = locationAddress;
+        this.jobType = JobType.JOB_POSTING;
     }
 
     // Getters and Setters
@@ -191,5 +299,57 @@ public class Job {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    // Getters and Setters cho các trường mới
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
+    }
+
+    public JobCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(JobCategory category) {
+        this.category = category;
+    }
+
+    public JobLevel getLevel() {
+        return level;
+    }
+
+    public void setLevel(JobLevel level) {
+        this.level = level;
+    }
+
+    public String getLocationAddress() {
+        return locationAddress;
+    }
+
+    public void setLocationAddress(String locationAddress) {
+        this.locationAddress = locationAddress;
+    }
+
+    // Utility methods
+    public boolean isJobSeeking() {
+        return JobType.JOB_SEEKING.equals(this.jobType);
+    }
+
+    public boolean isJobPosting() {
+        return JobType.JOB_POSTING.equals(this.jobType);
+    }
+
+    public String getFormattedSalary() {
+        if (salary == null) return "";
+        return salary.toString() + " VND/" + (salaryUnit != null ? salaryUnit.getValue() : "");
+    }
+
+    public String getFormattedWorkingTime() {
+        if (startTime == null || endTime == null) return "";
+        return startTime.toString() + " - " + endTime.toString();
     }
 }

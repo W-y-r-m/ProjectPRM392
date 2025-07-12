@@ -29,7 +29,9 @@ public class User {
         this.createdAt = new Date();
         this.isActive = true;
         this.levelOfViolation = "NONE";
+
         this.postQuota = 0; // Default post quota changed to 0
+
     }
 
     public User(String email, String password, String fullName, String role) {
@@ -60,23 +62,22 @@ public class User {
     public String getPassword() {
         return password;
     }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-public Boolean getOtpVerified() {
+
+    public Boolean getOtpVerified() {
         return otpVerified;
     }
-
 
     public void setOtpVerified(Boolean otpVerified) {
         this.otpVerified = otpVerified;
     }
-
 
     public void setPassword(String password) {
         this.password = password;
@@ -160,6 +161,97 @@ public Boolean getOtpVerified() {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    // Utility methods cho post quota
+    public boolean needsTopUp() {
+        return postQuota != null && postQuota >= 20; // Thay đổi từ > 20 thành >= 20
+    }
+
+    public boolean canPost() {
+        return postQuota != null && postQuota < 20; // Thay đổi từ <= 20 thành < 20
+    }
+
+    public void usePostQuota() {
+        if (postQuota != null && postQuota > 0) {
+            postQuota--;
+        }
+    }
+
+    public void addPostQuota(int amount) {
+        if (postQuota == null) {
+            postQuota = amount;
+        } else {
+            postQuota += amount;
+        }
+    }
+
+    public String getPostQuotaStatus() {
+        if (postQuota == null)
+            return "Chưa xác định";
+        if (postQuota >= 20)
+            return "Cần nạp tiền";
+        if (postQuota > 10)
+            return "Bình thường";
+        if (postQuota > 5)
+            return "Sắp hết quota";
+        if (postQuota > 0)
+            return "Quota thấp";
+        return "Hết quota";
+    }
+
+    // Methods cho profile update
+    public boolean isPostQuotaEditable() {
+        return false; // Không cho phép edit postQuota
+    }
+
+    public User updateProfile(String fullName, String phoneNumber, String description, Boolean gender) {
+        if (fullName != null && !fullName.trim().isEmpty()) {
+            this.fullName = fullName;
+        }
+        // Cập nhật phone number (cho phép rỗng)
+        if (phoneNumber != null) {
+            this.phoneNumber = phoneNumber.trim().isEmpty() ? null : phoneNumber.trim();
+        }
+        // Cập nhật description (cho phép rỗng)
+        if (description != null) {
+            this.description = description.trim().isEmpty() ? null : description.trim();
+        }
+        if (gender != null) {
+            this.gender = gender;
+        }
+        return this;
+    }
+
+    public boolean validateProfileUpdate(String fullName, String phoneNumber) {
+        // Validate fullName
+        if (fullName == null || fullName.trim().isEmpty()) {
+            return false;
+        }
+
+        // Validate phoneNumber - sử dụng method từ UserService
+        return true; // Để UserService handle phone validation
+    }
+
+    // Copy constructor để tránh reference issues
+    public User createCopy() {
+        User copy = new User();
+        copy.userId = this.userId;
+        copy.email = this.email;
+        copy.password = this.password;
+        copy.fullName = this.fullName;
+        copy.phoneNumber = this.phoneNumber;
+        copy.otpVerified = this.otpVerified;
+        copy.gender = this.gender;
+        copy.role = this.role;
+        copy.levelOfViolation = this.levelOfViolation;
+        copy.description = this.description;
+        copy.postQuota = this.postQuota;
+        copy.currentLatitude = this.currentLatitude;
+        copy.currentLongitude = this.currentLongitude;
+        copy.createdAt = this.createdAt;
+        copy.isActive = this.isActive;
+        return copy;
     }
 
     public boolean isVerified() {

@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -78,6 +79,9 @@ dependencies {
     
     // Permissions
     implementation("com.karumi:dexter:6.2.3")
+
+    // CardView cho giao diện bo góc, bóng đổ
+    implementation("androidx.cardview:cardview:1.0.0")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

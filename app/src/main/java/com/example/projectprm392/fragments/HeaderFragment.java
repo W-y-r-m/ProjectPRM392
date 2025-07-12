@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.projectprm392.R;
 import com.example.projectprm392.activities.ApplicationActivity;
+import com.example.projectprm392.activities.ProfileActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
@@ -47,14 +48,15 @@ public class HeaderFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_header, container, false);
-        
+
         initViews(view);
         setupController();
         setupListeners();
         updateUI();
-        
+
         return view;
     }
 
@@ -120,18 +122,18 @@ public class HeaderFragment extends Fragment {
     private void showUserMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(requireContext(), view);
         popupMenu.getMenuInflater().inflate(R.menu.user_menu, popupMenu.getMenu());
-        
+
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.menu_application){
+            if (id == R.id.menu_application) {
                 // Navigate to application
                 Intent intent = new Intent(requireContext(), ApplicationActivity.class);
                 startActivity(intent);
                 return true;
-            }
-            else if (id == R.id.menu_profile) {
+            } else if (id == R.id.menu_profile) {
                 // Navigate to profile
-                Toast.makeText(requireContext(), "Trang cá nhân", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), ProfileActivity.class);
+                startActivity(intent);
                 return true;
             } else if (id == R.id.menu_history) {
                 // Navigate to history
@@ -143,7 +145,7 @@ public class HeaderFragment extends Fragment {
             }
             return false;
         });
-        
+
         popupMenu.show();
     }
 

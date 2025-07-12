@@ -1,5 +1,6 @@
 package com.example.projectprm392.adapters;
 
+import android.content.Intent;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +110,11 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             if (databaseHelper != null) {
                 UserEntity user = databaseHelper.getUserById(job.getUserId());
                 if (user != null) {
-                    tvCompanyName.setText(user.getFullName());
+                    if ("JOB_SEEKING".equals(job.getPostType())) {
+                        tvCompanyName.setText("👤 " + user.getFullName() + " (Tìm việc)");
+                    } else {
+                        tvCompanyName.setText("🏢 " + user.getFullName());
+                    }
                 } else {
                     tvCompanyName.setText("Không rõ");
                 }
@@ -152,9 +157,10 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             
             // View button click listener
             btnView.setOnClickListener(v -> {
-                if (onJobClickListener != null) {
-                    onJobClickListener.onJobClick(job);
-                }
+                // Navigate to JobDetailActivity
+                Intent intent = new Intent(itemView.getContext(), com.example.projectprm392.activities.JobDetailActivity.class);
+                intent.putExtra("JOB_ID", job.getId());
+                itemView.getContext().startActivity(intent);
             });
             
             // Save button click listener
