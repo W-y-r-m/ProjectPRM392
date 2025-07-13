@@ -5,38 +5,11 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-
-
     <!-- Header Fragment -->
     <FrameLayout
         android:id="@+id/fragmentHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <!-- Nút quay về Home -->
-    <Button
-        android:id="@+id/btnBackToHome"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="← Trang chủ"
-        android:backgroundTint="#4267B2"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Nút tạo report -->
-    <Button
-        android:id="@+id/btnCreateReport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tạo report"
-        android:backgroundTint="#4267B2"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="12dp" />
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView

@@ -44,7 +44,6 @@ public class HomeBodyFragment extends Fragment {
     private ChipGroup chipGroupFilters;
     private FloatingActionButton fabPostJob;
     private MaterialButton btnPostJob;
-    private MaterialButton btnViewJobHistory;
     private MaterialButton btnShowFilters;
 
     private JobAdapter nearbyJobsAdapter;
@@ -78,7 +77,6 @@ public class HomeBodyFragment extends Fragment {
         chipGroupFilters = view.findViewById(R.id.chipGroupJobType);
         fabPostJob = view.findViewById(R.id.fabPostJob);
         btnPostJob = view.findViewById(R.id.btnPostJob);
-        btnViewJobHistory = view.findViewById(R.id.btnViewJobHistory);
         btnShowFilters = view.findViewById(R.id.btnApplyFilters);
 
         // Debug log
@@ -174,14 +172,6 @@ public class HomeBodyFragment extends Fragment {
 
         // Filter button
         btnShowFilters.setOnClickListener(v -> showFilterDialog());
-
-        // Xem lịch sử đăng Job
-        if (btnViewJobHistory != null) {
-            btnViewJobHistory.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), com.example.projectprm392.activities.PostHistoryActivity.class);
-                startActivity(intent);
-            });
-        }
 
         // Quick filters
         setupQuickFilters();
