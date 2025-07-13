@@ -138,6 +138,12 @@
             android:name=".views.ResetPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
+
+        <!-- ApprovedUsersActivity -->
+        <activity
+            android:name=".activities.ApprovedUsersActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
     </application>
 
 </manifest>
