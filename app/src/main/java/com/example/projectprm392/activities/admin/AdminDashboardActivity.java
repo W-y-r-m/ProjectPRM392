@@ -26,7 +26,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView tvWelcomeAdmin, tvTotalUsers, tvTotalJobs, tvTotalReports, tvTotalApplications;
-    private CardView cardUserManagement, cardPostManagement, cardReportManagement, cardApplicationManagement;
+    private CardView cardUserManagement, cardJobManagement, cardReportManagement, cardApplicationManagement;
     private MaterialButton btnRefreshStats;
     
     private DatabaseHelper databaseHelper;
@@ -54,7 +54,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         tvTotalApplications = findViewById(R.id.tvTotalApplications);
         
         cardUserManagement = findViewById(R.id.cardUserManagement);
-        cardPostManagement = findViewById(R.id.cardPostManagement);
+        cardJobManagement = findViewById(R.id.cardJobManagement);
         cardReportManagement = findViewById(R.id.cardReportManagement);
         cardApplicationManagement = findViewById(R.id.cardApplicationManagement);
         
@@ -89,25 +89,22 @@ public class AdminDashboardActivity extends AppCompatActivity {
             }
         });
 
-        cardPostManagement.setOnClickListener(v -> {
+        cardJobManagement.setOnClickListener(v -> {
             try {
                 Toast.makeText(this, "Đang mở Quản lý bài đăng...", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, AdminPostManagementActivity.class);
+                Intent intent = new Intent(this, AdminJobManagementActivity.class);
                 startActivity(intent);
             } catch (Exception e) {
                 Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                android.util.Log.e("AdminDashboard", "Error starting PostManagement: " + e.getMessage(), e);
+                android.util.Log.e("AdminDashboard", "Error starting JobManagement: " + e.getMessage(), e);
             }
         });
 
         cardReportManagement.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, AdminReportManagementActivity.class);
-                startActivity(intent);
-            } catch (Exception e) {
-                android.util.Log.e("AdminDashboard", "Error starting AdminReportManagementActivity", e);
-                Toast.makeText(this, "Lỗi mở quản lý báo cáo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            // TODO: Implement AdminReportManagementActivity
+            Toast.makeText(this, "Chức năng quản lý báo cáo đang phát triển", Toast.LENGTH_SHORT).show();
+            // Intent intent = new Intent(this, AdminReportManagementActivity.class);
+            // startActivity(intent);
         });
 
         cardApplicationManagement.setOnClickListener(v -> {

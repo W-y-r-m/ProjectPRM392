@@ -347,9 +347,9 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Post Management Card -->
+            <!-- Job Management Card -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardPostManagement"
+                android:id="@+id/cardJobManagement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
@@ -369,7 +369,7 @@
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/ic_post"
+                        android:src="@drawable/ic_work"
                         app:tint="#4CAF50" />
 
                     <LinearLayout
@@ -382,7 +382,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Quản lý bài đăng"
+                            android:text="Quản lý công việc"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/colorPrimaryDark" />
@@ -391,7 +391,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Quản lý bài đăng tuyển dụng và tìm việc của user"
+                            android:text="Duyệt, từ chối, xóa bài đăng công việc"
                             android:textSize="14sp"
                             android:textColor="@android:color/darker_gray" />
 
