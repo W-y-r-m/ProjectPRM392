@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menu_application2"
+        android:title="Đơn đăng ký của tôi" />
+    <item
         android:id="@+id/menu_application"
-        android:title="Đơn đăng ký" />
+        android:title="Đơn tuyển dụng " />
     <item
         android:id="@+id/menu_profile"
         android:title="Trang cá nhân" />

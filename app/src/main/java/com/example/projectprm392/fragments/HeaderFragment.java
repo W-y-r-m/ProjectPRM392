@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.projectprm392.R;
 import com.example.projectprm392.activities.ApplicationActivity;
+import com.example.projectprm392.activities.MyApplicationActivity;
 import com.example.projectprm392.activities.ProfileActivity;
 import com.example.projectprm392.controllers.LoginController;
 import com.example.projectprm392.models.User;
@@ -125,6 +126,12 @@ public class HeaderFragment extends Fragment {
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
+            if (id == R.id.menu_application2) {
+                // Navigate to application
+                Intent intent = new Intent(requireContext(), MyApplicationActivity.class);
+                startActivity(intent);
+                return true;
+            }
             if (id == R.id.menu_application) {
                 // Navigate to application
                 Intent intent = new Intent(requireContext(), ApplicationActivity.class);
