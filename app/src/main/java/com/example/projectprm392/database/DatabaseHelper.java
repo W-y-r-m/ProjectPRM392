@@ -15,6 +15,7 @@ public class DatabaseHelper {
     private UserDao userDao;
     private JobDao jobDao;
     private ApplicationDao applicationDao;
+    private ChatDao chatDao;
     private ExecutorService executor;
 
     public DatabaseHelper(Context context) {
@@ -22,6 +23,7 @@ public class DatabaseHelper {
         userDao = database.userDao();
         jobDao = database.jobDao();
         applicationDao = database.applicationDao();
+        chatDao = database.chatDao();
         executor = Executors.newFixedThreadPool(4);
     }
 
@@ -492,10 +494,13 @@ public class DatabaseHelper {
                 job.getId(),
                 user.getId(),
                 message,
-                null,
+                null, // otherFileUrl
+                null, // cvFileName
+                null, // cvFileUri
                 "pending",
                 null,
                 now);
+
     }
 
     public void close() {
@@ -512,5 +517,38 @@ public class DatabaseHelper {
     public boolean verifyUser(String email, String code, Date currentTime) {
         int updatedRows = userDao.verifyUser(email, code, currentTime);
         return updatedRows > 0;
+    }
+
+    // Chat methods
+    public void insertChatMessage(ChatEntity message) {
+        chatDao.insert(message);
+    }
+
+    public List<ChatEntity> getMessagesBetweenUsers(int userId1, int userId2, int jobId) {
+        return chatDao.getMessagesBetweenUsers(userId1, userId2, jobId);
+    }
+
+    public List<ChatEntity> getConversations(int userId) {
+        return chatDao.getConversations(userId);
+    }
+
+    public List<ChatEntity> getConversationsByJob(int userId, int jobId) {
+        return chatDao.getConversationsByJob(userId, jobId);
+    }
+
+    public List<ChatEntity> getUnreadMessages(int userId) {
+        return chatDao.getUnreadMessages(userId);
+    }
+
+    public void markMessagesAsRead(int userId, int senderId, int jobId) {
+        chatDao.markMessagesAsRead(userId, senderId, jobId);
+    }
+
+    public ChatEntity getLatestMessage(int userId1, int userId2, int jobId) {
+        return chatDao.getLatestMessage(userId1, userId2, jobId);
+    }
+
+    public int getUnreadMessageCount(int userId) {
+        return chatDao.getUnreadMessageCount(userId);
     }
 }

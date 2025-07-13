@@ -41,7 +41,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private TextView tvEmployerName, tvEmployerPhone, tvEmployerRole;
     
     // Action Buttons
-    private MaterialButton btnContactCall, btnApplyJob;
+    private MaterialButton btnContactCall, btnChat, btnApplyJob;
     
     private JobEntity currentJob;
     private UserEntity currentUser;
@@ -84,6 +84,7 @@ public class JobDetailActivity extends AppCompatActivity {
         
         // Action buttons
         btnContactCall = findViewById(R.id.btnContactCall);
+        btnChat = findViewById(R.id.btnChat);
         btnApplyJob = findViewById(R.id.btnApplyJob);
         
         // Initialize helpers
@@ -174,6 +175,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private void setupActionButtons() {
         if (currentJob == null || currentUser == null) {
             btnContactCall.setVisibility(View.GONE);
+            btnChat.setVisibility(View.GONE);
             btnApplyJob.setVisibility(View.GONE);
             return;
         }
@@ -181,9 +183,14 @@ public class JobDetailActivity extends AppCompatActivity {
         // Check if this is the job poster
         if (currentJob.getUserId() == currentUser.getId()) {
             btnContactCall.setVisibility(View.GONE);
+            btnChat.setVisibility(View.GONE);
             btnApplyJob.setVisibility(View.GONE);
             return;
         }
+        
+        // Always show chat button for interaction
+        btnChat.setVisibility(View.VISIBLE);
+        btnChat.setOnClickListener(v -> openChat());
         
         if ("JOB_SEEKING".equals(currentJob.getPostType())) {
             // This is a job seeking post - show contact button
@@ -267,6 +274,20 @@ public class JobDetailActivity extends AppCompatActivity {
         // Navigate to application form
         Intent intent = new Intent(this, ApplicationFormActivity.class);
         intent.putExtra("JOB_ID", currentJob.getId());
+        intent.putExtra("JOB_TITLE", currentJob.getTitle());
+        startActivity(intent);
+    }
+    
+    private void openChat() {
+        if (jobPoster == null) {
+            Toast.makeText(this, "Không thể tìm thấy thông tin người đăng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("OTHER_USER_ID", jobPoster.getId());
+        intent.putExtra("JOB_ID", currentJob.getId());
+        intent.putExtra("OTHER_USER_NAME", jobPoster.getFullName());
         intent.putExtra("JOB_TITLE", currentJob.getTitle());
         startActivity(intent);
     }

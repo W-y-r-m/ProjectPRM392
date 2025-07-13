@@ -376,6 +376,21 @@
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnChat"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="Nhắn tin"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_chat"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnApplyJob"
             android:layout_width="0dp"
             android:layout_height="56dp"

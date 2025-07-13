@@ -12,6 +12,9 @@
     
     <!-- Phone call permission -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- File access permission -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -130,6 +133,18 @@
         <!-- ResetPasswordActivity -->
         <activity
             android:name=".views.ResetPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+        
+        <!-- ChatActivity -->
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+        
+        <!-- ConversationListActivity -->
+        <activity
+            android:name=".activities.ConversationListActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
     </application>
