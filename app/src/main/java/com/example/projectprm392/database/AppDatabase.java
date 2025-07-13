@@ -8,7 +8,7 @@ import android.content.Context;
 
 
 @Database(entities = { UserEntity.class, JobEntity.class, ApplicationEntity.class, PostHistoryEntity.class,
-        ReportEntity.class }, version = 8, exportSchema = false)
+        ReportEntity.class, ChatEntity.class }, version = 10, exportSchema = false)
 @TypeConverters({ Converters.class })
 
 public abstract class AppDatabase extends RoomDatabase {
@@ -21,6 +21,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PostHistoryDao postHistoryDao();
 
     public abstract ReportDao reportDao();
+
+    public abstract ChatDao chatDao();
 
     private static volatile AppDatabase INSTANCE;
 

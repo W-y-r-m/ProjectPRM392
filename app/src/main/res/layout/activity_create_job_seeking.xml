@@ -148,54 +148,77 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Needed Amount -->
-                    <com.google.android.material.textfield.TextInputLayout
+                    <!-- Current Location -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vị trí làm việc *"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#1F2937"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Get Current Location Button -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardCurrentLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:hint="Số lượng người cần *"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:startIconDrawable="@drawable/ic_people"
-                        app:startIconTint="#10B981"
-                        app:helperText="Số lượng người cần tuyển cho vị trí này">
+                        android:layout_marginBottom="16dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtNeededAmount"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="VD: 1" />
+                            android:orientation="horizontal"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_gps"
+                                android:layout_marginEnd="12dp"
+                                app:tint="#10B981" />
 
-                    <!-- Location Info -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="#F3F4F6"
-                        android:padding="12dp"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center_vertical">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_location"
-                            android:layout_marginEnd="8dp"
-                            app:tint="#10B981" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Lấy vị trí hiện tại"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#1F2937" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Vị trí hiện tại sẽ được cập nhật tự động"
-                            android:textSize="14sp"
-                            android:textColor="#6B7280" />
+                                <TextView
+                                    android:id="@+id/tvLocationStatus"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nhấn để lấy vị trí hiện tại"
+                                    android:textSize="14sp"
+                                    android:textColor="#6B7280"
+                                    android:layout_marginTop="2dp" />
 
-                    </LinearLayout>
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_back"
+                                android:rotation="180"
+                                app:tint="#9CA3AF" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
 
                     <!-- Submit Button -->
                     <com.google.android.material.button.MaterialButton

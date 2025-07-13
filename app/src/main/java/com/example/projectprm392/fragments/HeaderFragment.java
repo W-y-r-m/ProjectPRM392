@@ -1,12 +1,15 @@
 package com.example.projectprm392.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,21 +18,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectprm392.R;
 import com.example.projectprm392.activities.ApplicationActivity;
 import com.example.projectprm392.activities.MyApplicationActivity;
+import com.example.projectprm392.activities.ChatActivity;
+import com.example.projectprm392.activities.ConversationListActivity;
 import com.example.projectprm392.activities.ProfileActivity;
+import com.example.projectprm392.adapters.ChatDialogAdapter;
 import com.example.projectprm392.controllers.LoginController;
+import com.example.projectprm392.database.ChatEntity;
+import com.example.projectprm392.database.DatabaseHelper;
+import com.example.projectprm392.database.UserEntity;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
 import com.example.projectprm392.views.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HeaderFragment extends Fragment {
 
     private ImageView ivLogo;
     private SearchView searchView;
+    private ImageView ivChat;
     private ImageView ivNotification;
     private ImageView ivProfile;
     private MaterialButton btnLogin;
@@ -67,6 +82,7 @@ public class HeaderFragment extends Fragment {
     private void initViews(View view) {
         ivLogo = view.findViewById(R.id.ivLogo);
         searchView = view.findViewById(R.id.searchView);
+        ivChat = view.findViewById(R.id.ivChat);
         ivNotification = view.findViewById(R.id.ivNotification);
         ivProfile = view.findViewById(R.id.ivProfile);
         btnLogin = view.findViewById(R.id.btnLogin);
@@ -93,6 +109,15 @@ public class HeaderFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
+            }
+        });
+
+        // Chat click
+        ivChat.setOnClickListener(v -> {
+            if (sessionManager.isLoggedIn()) {
+                showChatDialog();
+            } else {
+                Toast.makeText(requireContext(), "Vui lòng đăng nhập để sử dụng chat", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -189,13 +214,88 @@ public class HeaderFragment extends Fragment {
         super.onResume();
         updateUI();
     }
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // Profile được update thành công, refresh UI
             updateUI();
+        }
+    }
+
+    private void showChatDialog() {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_chat_list);
+
+        // Make dialog fullwidth
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        // Initialize views
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerViewChatDialog);
+        LinearLayout emptyState = dialog.findViewById(R.id.llEmptyState);
+        ImageView closeButton = dialog.findViewById(R.id.ivCloseDialog);
+        MaterialButton viewAllButton = dialog.findViewById(R.id.btnViewAllChats);
+
+        // Set up close button
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+
+        // Set up view all button
+        viewAllButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            Intent intent = new Intent(requireContext(), ConversationListActivity.class);
+            startActivity(intent);
+        });
+
+        // Load conversations
+        loadConversationsForDialog(recyclerView, emptyState);
+
+        dialog.show();
+    }
+
+    private void loadConversationsForDialog(RecyclerView recyclerView, LinearLayout emptyState) {
+        try {
+            DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
+            String userEmail = sessionManager.getEmail();
+            UserEntity currentUser = databaseHelper.getUserByEmail(userEmail);
+
+            if (currentUser != null) {
+                // Get recent conversations
+                List<ChatEntity> allConversations = databaseHelper.getConversations(currentUser.getId());
+
+                if (allConversations.isEmpty()) {
+                    recyclerView.setVisibility(View.GONE);
+                    emptyState.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyState.setVisibility(View.GONE);
+
+                    // Set up RecyclerView
+                    recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                    ChatDialogAdapter adapter = new ChatDialogAdapter(
+                            requireContext(),
+                            allConversations,
+                            databaseHelper,
+                            currentUser.getId(),
+                            (otherUserId, jobId, otherUserName, jobTitle) -> {
+                                // Open chat activity
+                                Intent intent = new Intent(requireContext(), ChatActivity.class);
+                                intent.putExtra("OTHER_USER_ID", otherUserId);
+                                intent.putExtra("JOB_ID", jobId);
+                                intent.putExtra("OTHER_USER_NAME", otherUserName);
+                                intent.putExtra("JOB_TITLE", jobTitle);
+                                startActivity(intent);
+                            });
+                    recyclerView.setAdapter(adapter);
+                }
+            }
+        } catch (Exception e) {
+            recyclerView.setVisibility(View.GONE);
+            emptyState.setVisibility(View.VISIBLE);
         }
     }
 }

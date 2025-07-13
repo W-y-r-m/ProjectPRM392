@@ -12,6 +12,9 @@
     
     <!-- Phone call permission -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    
+    <!-- File access permission -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -166,12 +169,22 @@
             android:theme="@style/Theme.ProjectPRM392" />
             
         <!-- Admin Application Management Activity -->
-        <activity
-            android:name=".activities.admin.AdminApplicationManagementActivity"/>
+<!--        <activity-->
+<!--            android:name=".activities.admin.AdminApplicationManagementActivity"/>-->
 
         <!-- ApprovedUsersActivity -->
         <activity
-            android:name=".activities.ApprovedUsersActivity"
+            android:name=".activities.ApprovedUsersActivity"/>
+        
+        <!-- ChatActivity -->
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+        
+        <!-- ConversationListActivity -->
+        <activity
+            android:name=".activities.ConversationListActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
     </application>

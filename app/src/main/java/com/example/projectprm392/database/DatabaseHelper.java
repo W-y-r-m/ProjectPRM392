@@ -18,6 +18,7 @@ public class DatabaseHelper {
     private JobDao jobDao;
     private ApplicationDao applicationDao;
     private ReportDao reportDao;
+    private ChatDao chatDao;
     private ExecutorService executor;
 
     public DatabaseHelper(Context context) {
@@ -26,6 +27,7 @@ public class DatabaseHelper {
         jobDao = database.jobDao();
         applicationDao = database.applicationDao();
         reportDao = database.reportDao();
+        chatDao = database.chatDao();
         executor = Executors.newFixedThreadPool(4);
     }
 
@@ -76,7 +78,7 @@ public class DatabaseHelper {
         Log.d(TAG, "Full Name: " + userEntity.getFullName());
         Log.d(TAG, "Description: " + userEntity.getDescription());
         Log.d(TAG, "Role: " + userEntity.getRole());
-        
+
         try {
             // Cần có ID để update, nếu ID = 0 thì tìm theo email
             if (userEntity.getId() == 0) {
@@ -90,14 +92,14 @@ public class DatabaseHelper {
                     return false;
                 }
             }
-            
+
             Log.d(TAG, "Calling userDao.update with ID: " + userEntity.getId());
             Log.d(TAG, "Data to update - Full Name: " + userEntity.getFullName());
             Log.d(TAG, "Data to update - Description: " + userEntity.getDescription());
             Log.d(TAG, "Data to update - Role: " + userEntity.getRole());
-            
+
             userDao.update(userEntity);
-            
+
             // Verify update
             UserEntity updatedEntity = userDao.getByEmail(userEntity.getEmail());
             Log.d(TAG, "After update - Full Name: " + updatedEntity.getFullName());
@@ -135,10 +137,10 @@ public class DatabaseHelper {
             Log.d(TAG, "=== UPDATE PASSWORD DEBUG START ===");
             Log.d(TAG, "Updating password for email: " + email);
             Log.d(TAG, "New password length: " + hashedPassword.length());
-            
+
             int rowsAffected = userDao.updatePassword(email, hashedPassword);
             Log.d(TAG, "Rows affected: " + rowsAffected);
-            
+
             // Verify password was updated
             UserEntity user = userDao.getByEmail(email);
             if (user != null) {
@@ -147,7 +149,7 @@ public class DatabaseHelper {
             } else {
                 Log.e(TAG, "User not found after password update!");
             }
-            
+
             Log.d(TAG, "=== UPDATE PASSWORD DEBUG END ===");
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -158,7 +160,7 @@ public class DatabaseHelper {
     }
 
     // ========== JOB MANAGEMENT METHODS ==========
-    
+
     public List<JobEntity> getAllJobs() {
         return jobDao.getAllActiveJobs();
     }
@@ -209,15 +211,15 @@ public class DatabaseHelper {
             Log.d(TAG, "Updating job: " + job.getTitle());
             Log.d(TAG, "Job ID: " + job.getId());
             Log.d(TAG, "Active status: " + job.getIsActive());
-            
+
             jobDao.update(job);
-            
+
             // Verify update
             JobEntity updatedJob = jobDao.getById(job.getId());
             if (updatedJob != null) {
                 Log.d(TAG, "After update - Active status: " + updatedJob.getIsActive());
             }
-            
+
             Log.d(TAG, "=== UPDATE JOB DEBUG END ===");
             return true;
         } catch (Exception e) {
@@ -294,8 +296,9 @@ public class DatabaseHelper {
     }
 
     public int getApplicationsByJobIdAndStatus(int jobId, String status) {
-       return applicationDao.getApplicationsByJobIdAndStatus(jobId, status);
+        return applicationDao.getApplicationsByJobIdAndStatus(jobId, status);
     }
+
     public void createSampleApplications() {
         List<UserEntity> users = getUsersByRole("WORKER");
         List<JobEntity> jobs = getAllJobs();
@@ -328,10 +331,13 @@ public class DatabaseHelper {
                 job.getId(),
                 user.getId(),
                 message,
-                null,
+                null, // otherFileUrl
+                null, // cvFileName
+                null, // cvFileUri
                 "pending",
                 null,
                 now);
+
     }
 
     public void close() {
@@ -389,41 +395,47 @@ public class DatabaseHelper {
 
     // Utility methods - converter methods
     public UserEntity convertUserToEntity(User user) {
-        if (user == null) return null;
-        
+        if (user == null)
+            return null;
+
         UserEntity entity = new UserEntity();
         entity.setUserId(user.getUserId() != null ? user.getUserId().toString() : UUID.randomUUID().toString());
         entity.setEmail(user.getEmail());
         entity.setPassword(user.getPassword());
         entity.setFullName(user.getFullName());
         entity.setPhoneNumber(user.getPhoneNumber());
-        // entity.setAddress(user.getAddress()); // Comment out since User doesn't have getAddress()
+        // entity.setAddress(user.getAddress()); // Comment out since User doesn't have
+        // getAddress()
         entity.setDescription(user.getDescription());
         entity.setRole(user.getRole());
         entity.setCreatedAt(user.getCreatedAt() != null ? user.getCreatedAt() : new Date());
-        // entity.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have setUpdatedAt()
+        // entity.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have
+        // setUpdatedAt()
         entity.setIsVerified(user.isVerified()); // Use isVerified() instead of getIsVerified()
         return entity;
     }
-    
+
     public User convertEntityToUser(UserEntity entity) {
-        if (entity == null) return null;
-        
+        if (entity == null)
+            return null;
+
         User user = new User();
         user.setUserId(UUID.fromString(entity.getUserId()));
         user.setEmail(entity.getEmail());
         user.setPassword(entity.getPassword());
         user.setFullName(entity.getFullName());
         user.setPhoneNumber(entity.getPhoneNumber());
-        // user.setAddress(entity.getAddress()); // Comment out since User doesn't have setAddress()
+        // user.setAddress(entity.getAddress()); // Comment out since User doesn't have
+        // setAddress()
         user.setDescription(entity.getDescription());
         user.setRole(entity.getRole());
         user.setCreatedAt(entity.getCreatedAt());
-        // user.setUpdatedAt(entity.getUpdatedAt()); // Comment out since User doesn't have setUpdatedAt()
+        // user.setUpdatedAt(entity.getUpdatedAt()); // Comment out since User doesn't
+        // have setUpdatedAt()
         user.setVerified(entity.getIsVerified()); // Use setVerified() instead of setIsVerified()
         return user;
     }
-    
+
     // Sample data initialization
     public void initializeSampleData() {
         // Kiểm tra xem đã có data chưa
@@ -431,7 +443,7 @@ public class DatabaseHelper {
             List<UserEntity> users = userDao.getAll(); // Use getAll() instead of getAllUsers()
             if (users.isEmpty()) {
                 Log.d(TAG, "Initializing sample data...");
-                
+
                 // Tạo admin user
                 UserEntity admin = new UserEntity();
                 admin.setUserId(UUID.randomUUID().toString());
@@ -439,35 +451,40 @@ public class DatabaseHelper {
                 admin.setPassword("admin123");
                 admin.setFullName("Administrator");
                 admin.setPhoneNumber("0123456789");
-                // admin.setAddress("Admin Office"); // Comment out since UserEntity doesn't have setAddress()
+                // admin.setAddress("Admin Office"); // Comment out since UserEntity doesn't
+                // have setAddress()
                 admin.setDescription("System Administrator");
                 admin.setRole("admin");
                 admin.setCreatedAt(new Date());
-                // admin.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have setUpdatedAt()
+                // admin.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have
+                // setUpdatedAt()
                 admin.setIsVerified(true);
                 userDao.insert(admin);
-                
+
                 // Tạo sample jobs
                 JobEntity sampleJob = new JobEntity();
                 sampleJob.setTitle("Sample Job");
                 sampleJob.setDescription("This is a sample job posting");
-                // sampleJob.setCompanyName("Sample Company"); // Comment out since JobEntity doesn't have setCompanyName()
+                // sampleJob.setCompanyName("Sample Company"); // Comment out since JobEntity
+                // doesn't have setCompanyName()
                 sampleJob.setLocation("Sample Location");
                 sampleJob.setSalary("$1000-2000");
                 sampleJob.setJobType("OFFERING");
-                // sampleJob.setCreatedBy(admin.getUserId()); // Comment out since JobEntity doesn't have setCreatedBy()
+                // sampleJob.setCreatedBy(admin.getUserId()); // Comment out since JobEntity
+                // doesn't have setCreatedBy()
                 sampleJob.setCreatedAt(new Date());
-                // sampleJob.setUpdatedAt(new Date()); // Comment out since JobEntity doesn't have setUpdatedAt()
+                // sampleJob.setUpdatedAt(new Date()); // Comment out since JobEntity doesn't
+                // have setUpdatedAt()
                 sampleJob.setIsActive(true);
                 jobDao.insert(sampleJob);
-                
+
                 Log.d(TAG, "Sample data initialized successfully");
             }
         } catch (Exception e) {
             Log.e(TAG, "Error initializing sample data", e);
         }
     }
-    
+
     // Nearby jobs method
     public List<JobEntity> getNearbyJobs(int limit) {
         try {
@@ -477,7 +494,7 @@ public class DatabaseHelper {
             return jobDao.getAllActiveJobs();
         }
     }
-    
+
     // Verification code method
     public void clearVerificationCode(String email) {
         try {
@@ -508,5 +525,38 @@ public class DatabaseHelper {
             android.util.Log.e("DatabaseHelper", "Error getting current password", e);
             return null;
         }
+    }
+
+    // Chat methods
+    public void insertChatMessage(ChatEntity message) {
+        chatDao.insert(message);
+    }
+
+    public List<ChatEntity> getMessagesBetweenUsers(int userId1, int userId2, int jobId) {
+        return chatDao.getMessagesBetweenUsers(userId1, userId2, jobId);
+    }
+
+    public List<ChatEntity> getConversations(int userId) {
+        return chatDao.getConversations(userId);
+    }
+
+    public List<ChatEntity> getConversationsByJob(int userId, int jobId) {
+        return chatDao.getConversationsByJob(userId, jobId);
+    }
+
+    public List<ChatEntity> getUnreadMessages(int userId) {
+        return chatDao.getUnreadMessages(userId);
+    }
+
+    public void markMessagesAsRead(int userId, int senderId, int jobId) {
+        chatDao.markMessagesAsRead(userId, senderId, jobId);
+    }
+
+    public ChatEntity getLatestMessage(int userId1, int userId2, int jobId) {
+        return chatDao.getLatestMessage(userId1, userId2, jobId);
+    }
+
+    public int getUnreadMessageCount(int userId) {
+        return chatDao.getUnreadMessageCount(userId);
     }
 }

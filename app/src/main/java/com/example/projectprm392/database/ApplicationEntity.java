@@ -32,6 +32,12 @@ public class ApplicationEntity {
     @ColumnInfo(name = "otherFileUrl")
     private String otherFileUrl;
 
+    @ColumnInfo(name = "cvFileName")
+    private String cvFileName;
+
+    @ColumnInfo(name = "cvFileUri")
+    private String cvFileUri;
+
     @ColumnInfo(name = "status")
     private String status = "pending";
 
@@ -49,13 +55,15 @@ public class ApplicationEntity {
     }
 
     public ApplicationEntity(int id, @NonNull String applicationId, int jobId, int userId, String message,
-            String otherFileUrl, String status, String reply, long appliedAt) {
+            String otherFileUrl, String cvFileName, String cvFileUri, String status, String reply, long appliedAt) {
         this.id = id;
         this.applicationId = applicationId;
         this.jobId = jobId;
         this.userId = userId;
         this.message = message;
         this.otherFileUrl = otherFileUrl;
+        this.cvFileName = cvFileName;
+        this.cvFileUri = cvFileUri;
         this.status = status;
         this.reply = reply;
         this.appliedAt = appliedAt;
@@ -108,6 +116,22 @@ public class ApplicationEntity {
 
     public void setOtherFileUrl(String otherFileUrl) {
         this.otherFileUrl = otherFileUrl;
+    }
+
+    public String getCvFileName() {
+        return cvFileName;
+    }
+
+    public void setCvFileName(String cvFileName) {
+        this.cvFileName = cvFileName;
+    }
+
+    public String getCvFileUri() {
+        return cvFileUri;
+    }
+
+    public void setCvFileUri(String cvFileUri) {
+        this.cvFileUri = cvFileUri;
     }
 
     public String getStatus() {
