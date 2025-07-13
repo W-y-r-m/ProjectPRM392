@@ -30,6 +30,14 @@ public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.
         holder.tvTitle.setText(job.getTitle());
         holder.tvDate.setText(job.getCreatedAt() != null ? job.getCreatedAt().toString() : "");
         holder.tvContent.setText(job.getDescription());
+
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Context context = v.getContext();
+            android.content.Intent intent = new android.content.Intent(context,
+                    com.example.projectprm392.activities.ApprovedUsersActivity.class);
+            intent.putExtra("jobId", job.getId()); // Đảm bảo JobEntity có getId()
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -39,6 +47,7 @@ public class PostHistoryAdapter extends RecyclerView.Adapter<PostHistoryAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvDate, tvContent;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvPostTitle);

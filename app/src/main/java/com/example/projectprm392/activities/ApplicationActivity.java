@@ -11,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectprm392.R;
 import com.example.projectprm392.adapters.ApplicationAdapter;
+import com.example.projectprm392.database.AppDatabase;
 import com.example.projectprm392.database.ApplicationEntity;
 import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.JobEntity;
+import com.example.projectprm392.database.UserDao;
+import com.example.projectprm392.database.UserEntity;
 import com.example.projectprm392.utils.SessionManager;
 
 import java.util.List;
@@ -51,12 +54,16 @@ public class ApplicationActivity extends AppCompatActivity {
         // Lấy userId từ session
         SessionManager sessionManager = new SessionManager(this);
         String userIdStr = sessionManager.getUserId();
+
+        AppDatabase db = AppDatabase.getDatabase(this);
+        UserDao userDao = db.userDao();
+        UserEntity user = userDao.getByUserId(userIdStr);
+        int userIdInt = user != null ? user.getId() : -1;
         List<ApplicationEntity> applications;
-        if (userIdStr != null) {
+        if (userIdInt != -1) {
             try {
-                int userId = Integer.parseInt(userIdStr);
                 // Lấy tất cả job mà user này là chủ sở hữu
-                List<JobEntity> jobs = databaseHelper.getJobsByUserId(userId);
+                List<JobEntity> jobs = databaseHelper.getJobsByUserId(userIdInt);
                 applications = new java.util.ArrayList<>();
                 for (JobEntity job : jobs) {
                     List<ApplicationEntity> apps = databaseHelper.getApplicationsByJobId(job.getId());

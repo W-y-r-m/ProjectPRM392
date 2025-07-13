@@ -43,4 +43,8 @@ public interface ApplicationDao {
     // Lấy application theo status
     @Query("SELECT * FROM applications WHERE status = :status")
     List<ApplicationEntity> getApplicationsByStatus(String status);
+
+    // Xoá tất cả applications
+    @Query("SELECT COUNT(*) FROM applications WHERE jobId = :jobId AND status = :status")
+    int getApplicationsByJobIdAndStatus(int jobId, String status);
 }
