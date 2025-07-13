@@ -288,9 +288,9 @@ public class CreateJobPostingActivity extends AppCompatActivity {
             jobEntity.setIsActive(true);
 
             // Insert job
-            long jobId = databaseHelper.insertJob(jobEntity);
+            boolean success = databaseHelper.insertJob(jobEntity);
 
-            if (jobId > 0) {
+            if (success) {
                 // Update user's post quota
                 user.setPostQuota(user.getPostQuota() + 1);
                 databaseHelper.updateUser(databaseHelper.convertEntityToUser(user));

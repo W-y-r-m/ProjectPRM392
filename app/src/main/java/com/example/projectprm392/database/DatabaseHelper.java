@@ -356,6 +356,140 @@ public class DatabaseHelper {
         reportDao.insert(report);
     }
 
+    public boolean updateReport(ReportEntity report) {
+        try {
+            reportDao.update(report);
+            return true;
+        } catch (Exception e) {
+            android.util.Log.e("DatabaseHelper", "Error updating report", e);
+            return false;
+        }
+    }
+
+    public boolean deleteReport(String reportId) {
+        try {
+            reportDao.deleteById(reportId);
+            return true;
+        } catch (Exception e) {
+            android.util.Log.e("DatabaseHelper", "Error deleting report", e);
+            return false;
+        }
+    }
+
+    public ReportEntity getReportById(String reportId) {
+        return reportDao.getReportById(reportId);
+    }
+
+    public List<ReportEntity> getReportsByStatus(String status) {
+        return reportDao.getReportsByStatus(status);
+    }
+
+    // Utility methods - converter methods
+    public UserEntity convertUserToEntity(User user) {
+        if (user == null) return null;
+        
+        UserEntity entity = new UserEntity();
+        entity.setUserId(user.getUserId() != null ? user.getUserId().toString() : UUID.randomUUID().toString());
+        entity.setEmail(user.getEmail());
+        entity.setPassword(user.getPassword());
+        entity.setFullName(user.getFullName());
+        entity.setPhoneNumber(user.getPhoneNumber());
+        // entity.setAddress(user.getAddress()); // Comment out since User doesn't have getAddress()
+        entity.setDescription(user.getDescription());
+        entity.setRole(user.getRole());
+        entity.setCreatedAt(user.getCreatedAt() != null ? user.getCreatedAt() : new Date());
+        // entity.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have setUpdatedAt()
+        entity.setIsVerified(user.isVerified()); // Use isVerified() instead of getIsVerified()
+        return entity;
+    }
+    
+    public User convertEntityToUser(UserEntity entity) {
+        if (entity == null) return null;
+        
+        User user = new User();
+        user.setUserId(UUID.fromString(entity.getUserId()));
+        user.setEmail(entity.getEmail());
+        user.setPassword(entity.getPassword());
+        user.setFullName(entity.getFullName());
+        user.setPhoneNumber(entity.getPhoneNumber());
+        // user.setAddress(entity.getAddress()); // Comment out since User doesn't have setAddress()
+        user.setDescription(entity.getDescription());
+        user.setRole(entity.getRole());
+        user.setCreatedAt(entity.getCreatedAt());
+        // user.setUpdatedAt(entity.getUpdatedAt()); // Comment out since User doesn't have setUpdatedAt()
+        user.setVerified(entity.getIsVerified()); // Use setVerified() instead of setIsVerified()
+        return user;
+    }
+    
+    // Sample data initialization
+    public void initializeSampleData() {
+        // Kiểm tra xem đã có data chưa
+        try {
+            List<UserEntity> users = userDao.getAll(); // Use getAll() instead of getAllUsers()
+            if (users.isEmpty()) {
+                Log.d(TAG, "Initializing sample data...");
+                
+                // Tạo admin user
+                UserEntity admin = new UserEntity();
+                admin.setUserId(UUID.randomUUID().toString());
+                admin.setEmail("admin@job.com");
+                admin.setPassword("admin123");
+                admin.setFullName("Administrator");
+                admin.setPhoneNumber("0123456789");
+                // admin.setAddress("Admin Office"); // Comment out since UserEntity doesn't have setAddress()
+                admin.setDescription("System Administrator");
+                admin.setRole("admin");
+                admin.setCreatedAt(new Date());
+                // admin.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have setUpdatedAt()
+                admin.setIsVerified(true);
+                userDao.insert(admin);
+                
+                // Tạo sample jobs
+                JobEntity sampleJob = new JobEntity();
+                sampleJob.setTitle("Sample Job");
+                sampleJob.setDescription("This is a sample job posting");
+                // sampleJob.setCompanyName("Sample Company"); // Comment out since JobEntity doesn't have setCompanyName()
+                sampleJob.setLocation("Sample Location");
+                sampleJob.setSalary("$1000-2000");
+                sampleJob.setJobType("OFFERING");
+                // sampleJob.setCreatedBy(admin.getUserId()); // Comment out since JobEntity doesn't have setCreatedBy()
+                sampleJob.setCreatedAt(new Date());
+                // sampleJob.setUpdatedAt(new Date()); // Comment out since JobEntity doesn't have setUpdatedAt()
+                sampleJob.setIsActive(true);
+                jobDao.insert(sampleJob);
+                
+                Log.d(TAG, "Sample data initialized successfully");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing sample data", e);
+        }
+    }
+    
+    // Nearby jobs method
+    public List<JobEntity> getNearbyJobs(int limit) {
+        try {
+            return jobDao.getNearbyJobs(limit); // Use existing getNearbyJobs method
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting nearby jobs", e);
+            return jobDao.getAllActiveJobs();
+        }
+    }
+    
+    // Verification code method
+    public void clearVerificationCode(String email) {
+        try {
+            UserEntity user = userDao.getByEmail(email);
+            if (user != null) {
+                // Assuming verification code is stored in a field, clear it
+                user.setIsVerified(true);
+                userDao.update(user);
+                Log.d(TAG, "Cleared verification code for: " + email);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing verification code", e);
+        }
+    }
+
     /**
      * Debug method để kiểm tra mật khẩu hiện tại của user
      */

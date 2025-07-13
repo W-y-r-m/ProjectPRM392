@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/divider"
+    app:strokeWidth="1dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header with status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:id="@+id/ivStatusIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_pending"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Chờ xử lý"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCreatedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25/12/2024 10:30"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Reporter and Target Info -->
+        <TextView
+            android:id="@+id/tvReporterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Người báo cáo: Nguyễn Văn A"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvTargetName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Người bị báo cáo: Trần Thị B"
+            android:textSize="14sp"
+            android:textColor="@color/error"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Report Content -->
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nội dung báo cáo sẽ hiển thị ở đây. Có thể là các vi phạm về nội dung bài đăng hoặc hành vi không phù hợp..."
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Xóa"
+                android:textColor="@color/error"
+                android:backgroundTint="@android:color/transparent"
+                app:strokeColor="@color/error"
+                app:strokeWidth="1dp"
+                app:icon="@drawable/ic_delete"
+                app:iconTint="@color/error"
+                app:iconSize="16dp"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReject"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Từ chối"
+                android:textColor="@color/warning"
+                android:backgroundTint="@android:color/transparent"
+                app:strokeColor="@color/warning"
+                app:strokeWidth="1dp"
+                app:icon="@drawable/ic_cancel"
+                app:iconTint="@color/warning"
+                app:iconSize="16dp"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResolve"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Giải quyết"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/success"
+                app:icon="@drawable/ic_check_circle"
+                app:iconTint="@android:color/white"
+                app:iconSize="16dp"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

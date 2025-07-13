@@ -146,10 +146,11 @@
             android:parentActivityName=".activities.admin.AdminDashboardActivity"
             android:theme="@style/Theme.ProjectPRM392" />
             
-        <!-- Admin Job Management Activity -->
+        <!-- Admin Post Management Activity -->
         <activity
-            android:name=".activities.admin.AdminJobManagementActivity"
+            android:name=".activities.admin.AdminPostManagementActivity"
             android:exported="false"
+            android:parentActivityName=".activities.admin.AdminDashboardActivity"
             android:theme="@style/Theme.ProjectPRM392" />
             
         <!-- Admin Report Management Activity -->

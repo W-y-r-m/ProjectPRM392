@@ -37,6 +37,7 @@
     <color name="divider">#E0E0E0</color>
     <color name="error">#F44336</color>
     <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
     
     <!-- Status Indicator Colors -->
     <color name="status_active">#4CAF50</color>
@@ -66,4 +67,9 @@
     <color name="gray_light">#F5F5F5</color>
     <color name="gray_medium">#BDBDBD</color>
     <color name="gray_dark">#757575</color>
+    
+    <!-- Additional Required Colors -->
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
+    <color name="orange">#FF9800</color>
 </resources>

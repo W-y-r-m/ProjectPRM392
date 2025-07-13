@@ -19,7 +19,7 @@ public class User {
     private Double currentLongitude;
     private Date createdAt;
     private Boolean isActive;
-    private boolean isVerified;
+    private Boolean isVerified;
     private String verificationCode;
     private Date verificationCodeExpiresAt;
 
@@ -163,6 +163,25 @@ public class User {
         this.isActive = isActive;
     }
 
+
+
+    public Boolean getIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(Boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    // Alias methods for compatibility
+    public void setVerified(boolean verified) {
+        this.isVerified = verified;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
     // Utility methods cho post quota
     public boolean needsTopUp() {
         return postQuota != null && postQuota >= 20; // Thay đổi từ > 20 thành >= 20
@@ -252,29 +271,5 @@ public class User {
         copy.createdAt = this.createdAt;
         copy.isActive = this.isActive;
         return copy;
-    }
-
-    public boolean isVerified() {
-        return isVerified;
-    }
-
-    public void setVerified(boolean verified) {
-        isVerified = verified;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public Date getVerificationCodeExpiresAt() {
-        return verificationCodeExpiresAt;
-    }
-
-    public void setVerificationCodeExpiresAt(Date verificationCodeExpiresAt) {
-        this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
 }
