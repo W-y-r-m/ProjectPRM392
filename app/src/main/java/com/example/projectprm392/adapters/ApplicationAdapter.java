@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,7 +47,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     public class ApplicationViewHolder extends RecyclerView.ViewHolder {
-        private TextView  tvJobName, tvUser, tvMessage, tvStatus;
+        private TextView tvJobName, tvUser, tvMessage, tvStatus;
         private Button btnApprove, btnReject;
 
         public ApplicationViewHolder(@NonNull View itemView) {
@@ -76,6 +77,17 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
             btnReject.setEnabled(!application.getStatus().equalsIgnoreCase("Rejected"));
 
             btnApprove.setOnClickListener(v -> {
+                int jobId = application.getJobId();
+                JobEntity jobFind = databaseHelper.getJobById(jobId);
+                int maxUsers = jobFind.getNeededAmount();
+                int countApproved = databaseHelper.getApplicationsByJobIdAndStatus(jobId, "Approved");
+                if (countApproved >= maxUsers) {
+                    btnApprove.setEnabled(false);
+                    Toast.makeText(itemView.getContext(), "Vượt quá số lượng người cần tuyển", Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+                // Chỉ approve nếu chưa vượt quá số lượng
                 application.setStatus("Approved");
                 databaseHelper.updateApplication(application);
                 notifyItemChanged(getAdapterPosition());

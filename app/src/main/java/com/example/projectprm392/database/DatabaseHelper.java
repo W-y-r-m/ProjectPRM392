@@ -460,6 +460,9 @@ public class DatabaseHelper {
         applicationDao.delete(application);
     }
 
+    public int getApplicationsByJobIdAndStatus(int jobId, String status) {
+       return applicationDao.getApplicationsByJobIdAndStatus(jobId, status);
+    }
     public void createSampleApplications() {
         List<UserEntity> users = getUsersByRole("WORKER");
         List<JobEntity> jobs = getAllJobs();
