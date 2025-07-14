@@ -21,6 +21,7 @@ public class Payment {
     private String qrCodeUrl;
     private String transactionId;
     private String paymentMethod;
+    private String errorMessage; // For storing error details when PayOS API fails
 
     public enum PaymentStatus {
         PENDING("pending"),
@@ -182,6 +183,14 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
     
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     // Utility methods
     public boolean isSuccessful() {
         return status == PaymentStatus.COMPLETED;

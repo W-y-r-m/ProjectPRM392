@@ -22,6 +22,7 @@ import com.example.projectprm392.R;
 import com.example.projectprm392.adapters.JobAdapter;
 import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.JobEntity;
+import com.example.projectprm392.database.UserEntity;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -242,10 +243,23 @@ public class HomeBodyFragment extends Fragment {
     private void loadNearbyJobs() {
         // Load jobs from database
         List<JobEntity> jobs = databaseHelper.getAllJobs();
+        
+        android.util.Log.d("HomeBodyFragment", "=== LOADING NEARBY JOBS ===");
+        android.util.Log.d("HomeBodyFragment", "Total jobs from database: " + jobs.size());
+        
+        for (int i = 0; i < jobs.size() && i < 5; i++) {
+            JobEntity job = jobs.get(i);
+            android.util.Log.d("HomeBodyFragment", "Job " + i + ": " + job.getTitle() + " (ID: " + job.getJobId() + ", Active: " + job.getIsActive() + ")");
+        }
+
+        // Sort jobs by distance if user location is available
+        jobs = sortJobsByDistance(jobs);
 
         nearbyJobs.clear();
         nearbyJobs.addAll(jobs);
         nearbyJobsAdapter.updateJobs(nearbyJobs);
+        
+        android.util.Log.d("HomeBodyFragment", "Updated adapter with " + nearbyJobs.size() + " jobs");
 
         // Set user location for distance calculation
         if (currentLocation != null) {
@@ -253,16 +267,164 @@ public class HomeBodyFragment extends Fragment {
         }
     }
 
+    private List<JobEntity> sortJobsByDistance(List<JobEntity> jobs) {
+        Location userLoc = getUserLocation();
+        if (userLoc == null) {
+            return jobs; // Return unsorted if no user location
+        }
+
+        // Create a copy of the list and sort by distance
+        List<JobEntity> sortedJobs = new ArrayList<>(jobs);
+        sortedJobs.sort((job1, job2) -> {
+            float distance1 = calculateDistanceToJob(job1, userLoc);
+            float distance2 = calculateDistanceToJob(job2, userLoc);
+            return Float.compare(distance1, distance2);
+        });
+
+        android.util.Log.d("HomeBodyFragment", "Sorted " + sortedJobs.size() + " jobs by distance");
+        return sortedJobs;
+    }
+
+    private Location getUserLocation() {
+        // First try to get current location from GPS
+        if (currentLocation != null) {
+            android.util.Log.d("HomeBodyFragment", "Using GPS location: " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
+            return currentLocation;
+        }
+
+        // Then try to get user's saved location from profile
+        try {
+            String userId = sessionManager.getUserId();
+            android.util.Log.d("HomeBodyFragment", "Getting user location for userId: " + userId);
+            if (userId != null) {
+                UserEntity user = databaseHelper.getUserById(userId); // Use String method instead of parsing to int
+                if (user != null && user.getCurrentLatitude() != null && user.getCurrentLongitude() != null) {
+                    Location userProfileLocation = new Location("profile");
+                    userProfileLocation.setLatitude(user.getCurrentLatitude());
+                    userProfileLocation.setLongitude(user.getCurrentLongitude());
+                    android.util.Log.d("HomeBodyFragment", "Using profile location: " + user.getCurrentLatitude() + ", " + user.getCurrentLongitude());
+                    return userProfileLocation;
+                } else {
+                    android.util.Log.d("HomeBodyFragment", "User not found or no coordinates saved");
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("HomeBodyFragment", "Error getting user location from profile: " + e.getMessage());
+        }
+
+        android.util.Log.d("HomeBodyFragment", "No user location available");
+        return null;
+    }
+
+    private float calculateDistanceToJob(JobEntity job, Location userLocation) {
+        if (job.getLocationLatitude() == null || job.getLocationLongitude() == null) {
+            return Float.MAX_VALUE; // Put jobs without location at the end
+        }
+
+        // Validate coordinates for Vietnam (rough bounds)
+        double jobLat = job.getLocationLatitude();
+        double jobLng = job.getLocationLongitude();
+        double userLat = userLocation.getLatitude();
+        double userLng = userLocation.getLongitude();
+        
+        // EXPERIMENTAL FIX: Check if coordinates might be swapped
+        // Vietnam latitude: 8-24, longitude: 102-110
+        boolean jobCoordsSwapped = false;
+        boolean userCoordsSwapped = false;
+        
+        if (jobLat > 50 && jobLng < 30) {
+            // Likely swapped - latitude too high, longitude too low
+            android.util.Log.w("HomeBodyFragment", "Job coordinates seem swapped! Lat: " + jobLat + ", Lng: " + jobLng + " - trying to fix");
+            double temp = jobLat;
+            jobLat = jobLng;
+            jobLng = temp;
+            jobCoordsSwapped = true;
+        }
+        
+        if (userLat > 50 && userLng < 30) {
+            // Likely swapped
+            android.util.Log.w("HomeBodyFragment", "User coordinates seem swapped! Lat: " + userLat + ", Lng: " + userLng + " - trying to fix");
+            double temp = userLat;
+            userLat = userLng;
+            userLng = temp;
+            userCoordsSwapped = true;
+        }
+        
+        // Debug: Test with known coordinates
+        // Hanoi: 21.0285, 105.8542
+        // Da Nang: 16.0544, 108.2022
+        // Expected distance: ~600-700km
+        if (Math.abs(jobLat - 21.0285) < 0.01 && Math.abs(jobLng - 105.8542) < 0.01) {
+            // This job is in Hanoi
+            android.util.Log.d("HomeBodyFragment", "JOB IS IN HANOI - testing distance calculation");
+            
+            // Test with exact Da Nang coordinates
+            Location testDaNangLocation = new Location("test");
+            testDaNangLocation.setLatitude(16.0544);
+            testDaNangLocation.setLongitude(108.2022);
+            
+            Location testHanoiLocation = new Location("test");
+            testHanoiLocation.setLatitude(21.0285);
+            testHanoiLocation.setLongitude(105.8542);
+            
+            float testDistance = testDaNangLocation.distanceTo(testHanoiLocation) / 1000f;
+            android.util.Log.d("HomeBodyFragment", "TEST: Da Nang to Hanoi distance should be ~600-700km, got: " + testDistance + " km");
+        }
+        
+        // Check if coordinates are reasonable for Vietnam
+        if (jobLat < 8.0 || jobLat > 24.0 || jobLng < 102.0 || jobLng > 110.0) {
+            android.util.Log.w("HomeBodyFragment", "Job coordinates seem invalid: " + jobLat + ", " + jobLng);
+        }
+        if (userLat < 8.0 || userLat > 24.0 || userLng < 102.0 || userLng > 110.0) {
+            android.util.Log.w("HomeBodyFragment", "User coordinates seem invalid: " + userLat + ", " + userLng);
+        }
+
+        Location jobLocation = new Location("job");
+        jobLocation.setLatitude(jobLat);
+        jobLocation.setLongitude(jobLng);
+        
+        float distanceInMeters = userLocation.distanceTo(jobLocation); // Distance in meters
+        float distanceInKm = distanceInMeters / 1000f;
+        
+        // Debug logging
+        android.util.Log.d("HomeBodyFragment", "Calculating distance:");
+        android.util.Log.d("HomeBodyFragment", "User location: " + userLat + ", " + userLng + (userCoordsSwapped ? " (FIXED)" : ""));
+        android.util.Log.d("HomeBodyFragment", "Job location: " + jobLat + ", " + jobLng + (jobCoordsSwapped ? " (FIXED)" : ""));
+        android.util.Log.d("HomeBodyFragment", "Distance: " + distanceInKm + " km");
+        
+        return distanceInMeters;
+    }
+
     private void loadAllJobs() {
+        // Debug coordinates
+        databaseHelper.debugCoordinates();
+        
         List<JobEntity> jobs = databaseHelper.getAllJobs();
+        jobs = sortJobsByDistance(jobs);
         nearbyJobs.clear();
         nearbyJobs.addAll(jobs);
         nearbyJobsAdapter.updateJobs(nearbyJobs);
+        
+        // Set user location for distance calculation
+        if (currentLocation != null) {
+            nearbyJobsAdapter.setUserLocation(currentLocation);
+        } else {
+            Location userLoc = getUserLocation();
+            if (userLoc != null) {
+                nearbyJobsAdapter.setUserLocation(userLoc);
+            }
+        }
     }
 
     private void loadRecommendedJobs() {
         // Load recommended jobs from database (simplified)
-        List<JobEntity> jobs = databaseHelper.getNearbyJobs(5); // Get top 5 jobs
+        List<JobEntity> jobs = databaseHelper.getNearbyJobs(10); // Get more jobs to sort
+
+        // Sort by distance and take top 5
+        jobs = sortJobsByDistance(jobs);
+        if (jobs.size() > 5) {
+            jobs = jobs.subList(0, 5);
+        }
 
         recommendedJobs.clear();
         recommendedJobs.addAll(jobs);
@@ -274,10 +436,12 @@ public class HomeBodyFragment extends Fragment {
         }
     }
 
-    private void refreshData() {
+    public void refreshData() {
         getCurrentLocation();
         loadInitialData();
-        swipeRefreshLayout.setRefreshing(false);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private void handlePostJob() {
@@ -316,6 +480,10 @@ public class HomeBodyFragment extends Fragment {
         List<JobEntity> filteredJobs = new ArrayList<>();
         List<JobEntity> allJobs = databaseHelper.getAllJobs();
         switch (filter) {
+            case "Gần nhất":
+                // Sort all jobs by distance from user
+                filteredJobs = sortJobsByDistance(allJobs);
+                break;
             case "Lương cao":
                 for (JobEntity job : allJobs) {
                     try {
@@ -343,9 +511,6 @@ public class HomeBodyFragment extends Fragment {
             case "Mới nhất":
                 filteredJobs.addAll(allJobs);
                 break;
-            case "Gần nhất":
-                filteredJobs.addAll(databaseHelper.getNearbyJobs(10));
-                break;
             default:
                 filteredJobs.addAll(allJobs);
         }
@@ -364,13 +529,28 @@ public class HomeBodyFragment extends Fragment {
 
         // Search jobs from database
         List<JobEntity> searchResults = databaseHelper.searchJobs(query);
+        
+        // Sort search results by distance
+        searchResults = sortJobsByDistance(searchResults);
 
         nearbyJobs.clear();
         nearbyJobs.addAll(searchResults);
         nearbyJobsAdapter.updateJobs(nearbyJobs);
 
+        // Set user location for distance calculation
+        if (currentLocation != null) {
+            nearbyJobsAdapter.setUserLocation(currentLocation);
+        } else {
+            Location userLoc = getUserLocation();
+            if (userLoc != null) {
+                nearbyJobsAdapter.setUserLocation(userLoc);
+            }
+        }
+
         if (searchResults.isEmpty()) {
             Toast.makeText(requireContext(), "Không tìm thấy kết quả cho: " + query, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Tìm thấy " + searchResults.size() + " việc làm", Toast.LENGTH_SHORT).show();
         }
     }
 

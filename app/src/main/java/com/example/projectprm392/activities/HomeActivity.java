@@ -59,5 +59,10 @@ public class HomeActivity extends AppCompatActivity implements HeaderFragment.On
         if (headerFragment != null) {
             headerFragment.updateUI();
         }
+        
+        // Refresh home body data when returning to this activity
+        if (homeBodyFragment != null) {
+            homeBodyFragment.refreshData();
+        }
     }
 }

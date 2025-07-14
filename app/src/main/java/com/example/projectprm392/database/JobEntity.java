@@ -47,6 +47,12 @@ public class JobEntity {
     @ColumnInfo(name = "working_time")
     private String workingTime;
     
+    @ColumnInfo(name = "start_date")
+    private Date startDate;
+    
+    @ColumnInfo(name = "end_date")
+    private Date endDate;
+    
     @ColumnInfo(name = "location_latitude")
     private Double locationLatitude;
     
@@ -70,8 +76,9 @@ public class JobEntity {
 
     public JobEntity(String jobId, int userId, String title, String description, 
                     String salary, String location, String jobType, String experienceLevel,
-                    int neededAmount, String workingTime, Double locationLatitude, 
-                    Double locationLongitude, String postType, String status, Date createdAt, Boolean isActive) {
+                    int neededAmount, String workingTime, Date startDate, Date endDate,
+                    Double locationLatitude, Double locationLongitude, String postType, 
+                    String status, Date createdAt, Boolean isActive) {
         this.jobId = jobId;
         this.userId = userId;
         this.title = title;
@@ -82,6 +89,8 @@ public class JobEntity {
         this.experienceLevel = experienceLevel;
         this.neededAmount = neededAmount;
         this.workingTime = workingTime;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
         this.postType = postType;
@@ -181,6 +190,22 @@ public class JobEntity {
 
     public void setWorkingTime(String workingTime) {
         this.workingTime = workingTime;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public Double getLocationLatitude() {

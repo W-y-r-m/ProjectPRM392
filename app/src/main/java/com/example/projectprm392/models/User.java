@@ -17,6 +17,7 @@ public class User {
     private Integer postQuota;
     private Double currentLatitude;
     private Double currentLongitude;
+    private String address;
     private Date createdAt;
     private Boolean isActive;
     private Boolean isVerified;
@@ -145,6 +146,14 @@ public class User {
 
     public void setCurrentLongitude(Double currentLongitude) {
         this.currentLongitude = currentLongitude;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Date getCreatedAt() {
@@ -276,6 +285,7 @@ public class User {
         copy.postQuota = this.postQuota;
         copy.currentLatitude = this.currentLatitude;
         copy.currentLongitude = this.currentLongitude;
+        copy.address = this.address;
         copy.createdAt = this.createdAt;
         copy.isActive = this.isActive;
         return copy;
