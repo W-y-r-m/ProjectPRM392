@@ -220,6 +220,67 @@
 
                     </androidx.cardview.widget.CardView>
 
+                    <!-- Manual Location Selection -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardManualLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_search"
+                                android:layout_marginEnd="12dp"
+                                app:tint="#3B82F6" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Chọn trên bản đồ"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#1F2937" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Chọn bất kỳ vị trí nào trên Google Maps"
+                                    android:textSize="14sp"
+                                    android:textColor="#6B7280"
+                                    android:layout_marginTop="2dp" />
+
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_back"
+                                android:rotation="180"
+                                app:tint="#9CA3AF" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
                     <!-- Submit Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSubmit"

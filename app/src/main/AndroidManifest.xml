@@ -97,6 +97,12 @@
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
 
+        <!-- Map Location Picker Activity -->
+        <activity
+            android:name=".activities.MapLocationPickerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+
         <!-- Create Job Posting Activity -->
         <activity
             android:name=".activities.CreateJobPostingActivity"
@@ -186,6 +192,17 @@
         <!-- ConversationListActivity -->
         <activity
             android:name=".activities.ConversationListActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <!-- Payment Activities -->
+        <activity
+            android:name=".activities.PaymentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ProjectPRM392" />
+            
+        <activity
+            android:name=".activities.PaymentSuccessActivity"
             android:exported="false"
             android:theme="@style/Theme.ProjectPRM392" />
     </application>

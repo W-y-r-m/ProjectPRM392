@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -24,6 +25,7 @@ import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.database.JobEntity;
 import com.example.projectprm392.database.UserEntity;
 import com.example.projectprm392.utils.SessionManager;
+import com.example.projectprm392.utils.LocationUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
@@ -44,6 +46,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
     private EditText edtTitle;
     private EditText edtDescription;
     private CardView cardCurrentLocation;
+    private CardView cardManualLocation;
     private TextView tvLocationStatus;
     private MaterialButton btnSubmit;
     private LinearProgressIndicator progressIndicator;
@@ -54,6 +57,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
     private Location selectedLocation;
     private String selectedLocationName = "";
     private boolean isLocationSelected = false;
+    private UserEntity currentUser; // Add currentUser as field
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
         edtTitle = findViewById(R.id.edtTitle);
         edtDescription = findViewById(R.id.edtDescription);
         cardCurrentLocation = findViewById(R.id.cardCurrentLocation);
+        cardManualLocation = findViewById(R.id.cardManualLocation);
         tvLocationStatus = findViewById(R.id.tvLocationStatus);
         btnSubmit = findViewById(R.id.btnSubmit);
         progressIndicator = findViewById(R.id.progressIndicator);
@@ -99,6 +104,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> finish());
         
         cardCurrentLocation.setOnClickListener(v -> useCurrentLocation());
+        cardManualLocation.setOnClickListener(v -> openMapLocationPicker());
     }
 
     private void checkPermissionAndGetLocation() {
@@ -114,6 +120,8 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
                     LOCATION_PERMISSION_REQUEST);
         } else {
             tvLocationStatus.setText("Nhấn để lấy vị trí hiện tại");
+            // Tự động sử dụng vị trí mặc định ở Việt Nam để đảm bảo có vị trí
+            useDefaultVietnamLocation();
         }
     }
 
@@ -161,8 +169,8 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         android.util.Log.e("LocationDebug", "Failed to get last location: " + e.getMessage());
-                        tvLocationStatus.setText("Lỗi khi lấy vị trí: " + e.getMessage());
-                        tvLocationStatus.setTextColor(getColor(android.R.color.holo_red_dark));
+                        // Fallback to default Vietnam location
+                        useDefaultVietnamLocation();
                     });
         } catch (SecurityException e) {
             android.util.Log.e("LocationDebug", "Security exception: " + e.getMessage());
@@ -230,98 +238,67 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
             new android.os.Handler().postDelayed(() -> {
                 fusedLocationClient.removeLocationUpdates(locationCallback);
                 if (!isLocationSelected) {
-                    tvLocationStatus.setText("Timeout - không thể lấy vị trí");
-                    tvLocationStatus.setTextColor(getColor(android.R.color.holo_red_dark));
+                    android.util.Log.d("LocationDebug", "Location request timeout, using default Vietnam location");
+                    useDefaultVietnamLocation();
                 }
             }, 30000);
             
         } catch (SecurityException e) {
             android.util.Log.e("LocationDebug", "Security exception in requestFreshLocation: " + e.getMessage());
-            tvLocationStatus.setText("Không có quyền truy cập vị trí");
-            tvLocationStatus.setTextColor(getColor(android.R.color.holo_red_dark));
+            useDefaultVietnamLocation();
         }
+    }
+
+    /**
+     * Sử dụng vị trí mặc định ở Việt Nam khi không thể lấy vị trí GPS
+     */
+    private void useDefaultVietnamLocation() {
+        android.util.Log.d("LocationDebug", "Using default Vietnam location (Hanoi)");
+        
+        LocationUtils.LocationData defaultLocation = LocationUtils.getDefaultVietnamLocation();
+        
+        // Tạo Location object từ tọa độ mặc định
+        selectedLocation = new Location("default");
+        selectedLocation.setLatitude(defaultLocation.latitude);
+        selectedLocation.setLongitude(defaultLocation.longitude);
+        selectedLocation.setTime(System.currentTimeMillis());
+        
+        selectedLocationName = defaultLocation.address + " (vị trí mặc định)";
+        isLocationSelected = true;
+        
+        // Cập nhật UI
+        tvLocationStatus.setText("📍 " + selectedLocationName);
+        tvLocationStatus.setTextColor(getColor(android.R.color.holo_blue_dark));
+        
+        Toast.makeText(this, "Đã sử dụng vị trí mặc định: " + defaultLocation.address, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Mở MapLocationPickerActivity để người dùng chọn vị trí trên bản đồ
+     */
+    private void openMapLocationPicker() {
+        Intent intent = new Intent(this, MapLocationPickerActivity.class);
+        startActivityForResult(intent, MAP_SELECTION_REQUEST);
     }
 
     private void getLocationName(Location location) {
         try {
-            // Use Vietnamese locale for better address parsing
-            Geocoder geocoder = new Geocoder(this, new Locale("vi", "VN"));
-            List<Address> addresses = geocoder.getFromLocation(
+            android.util.Log.d("LocationDebug", "Getting location name for: " + location.getLatitude() + ", " + location.getLongitude());
+            
+            // Sử dụng LocationUtils để lấy địa chỉ với locale Việt Nam
+            selectedLocationName = LocationUtils.getAddressFromCoordinates(this, 
                     location.getLatitude(), 
-                    location.getLongitude(), 
-                    1
-            );
+                    location.getLongitude());
             
-            android.util.Log.d("LocationDebug", "Geocoder result count: " + (addresses != null ? addresses.size() : 0));
+            android.util.Log.d("LocationDebug", "Final address: " + selectedLocationName);
             
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                
-                // Log all address components for debugging
-                android.util.Log.d("LocationDebug", "Country: " + address.getCountryName());
-                android.util.Log.d("LocationDebug", "AdminArea: " + address.getAdminArea());
-                android.util.Log.d("LocationDebug", "Locality: " + address.getLocality());
-                android.util.Log.d("LocationDebug", "SubLocality: " + address.getSubLocality());
-                android.util.Log.d("LocationDebug", "Thoroughfare: " + address.getThoroughfare());
-                android.util.Log.d("LocationDebug", "AddressLine(0): " + address.getAddressLine(0));
-                
-                // Build Vietnamese address format: Xã/Phường, Huyện, Tỉnh, Quốc gia
-                StringBuilder locationBuilder = new StringBuilder();
-                
-                // Thêm xã/phường (SubLocality hoặc Locality)
-                if (address.getSubLocality() != null && !address.getSubLocality().isEmpty()) {
-                    locationBuilder.append(address.getSubLocality());
-                } else if (address.getLocality() != null && !address.getLocality().isEmpty()) {
-                    locationBuilder.append(address.getLocality());
-                }
-                
-                // Thêm huyện/quận (từ AddressLine hoặc Locality)
-                if (address.getLocality() != null && !address.getLocality().isEmpty() && 
-                    !address.getLocality().equals(address.getSubLocality())) {
-                    if (locationBuilder.length() > 0) locationBuilder.append(", ");
-                    locationBuilder.append(address.getLocality());
-                }
-                
-                // Thêm tỉnh/thành phố (AdminArea)
-                if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
-                    if (locationBuilder.length() > 0) locationBuilder.append(", ");
-                    locationBuilder.append(address.getAdminArea());
-                }
-                
-                // Thêm quốc gia
-                if (address.getCountryName() != null && !address.getCountryName().isEmpty()) {
-                    if (locationBuilder.length() > 0) locationBuilder.append(", ");
-                    locationBuilder.append(address.getCountryName());
-                }
-                
-                selectedLocationName = locationBuilder.toString();
-                
-                // Nếu không build được địa chỉ từ các component, dùng address line
-                if (selectedLocationName.trim().isEmpty()) {
-                    selectedLocationName = address.getAddressLine(0);
-                }
-                
-                // Fallback cuối cùng
-                if (selectedLocationName == null || selectedLocationName.trim().isEmpty()) {
-                    selectedLocationName = "Vị trí hiện tại";
-                }
-                
-                android.util.Log.d("LocationDebug", "Final address: " + selectedLocationName);
-                
-            } else {
-                selectedLocationName = "Vị trí hiện tại (không thể xác định địa chỉ)";
-                android.util.Log.d("LocationDebug", "No addresses found");
-            }
-        } catch (IOException e) {
-            selectedLocationName = "Vị trí hiện tại (lỗi geocoding)";
-            android.util.Log.e("LocationDebug", "Geocoding error: " + e.getMessage());
         } catch (Exception e) {
             selectedLocationName = "Vị trí hiện tại (lỗi không xác định)";
             android.util.Log.e("LocationDebug", "Unexpected error: " + e.getMessage());
         }
         
         // Cập nhật UI
-        tvLocationStatus.setText("✓ Đã lấy vị trí thành công");
+        tvLocationStatus.setText("✓ " + selectedLocationName);
         tvLocationStatus.setTextColor(getColor(android.R.color.holo_green_dark));
     }
 
@@ -357,7 +334,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
 
         // Get current user
         String userEmail = sessionManager.getEmail();
-        UserEntity currentUser = databaseHelper.getUserByEmail(userEmail);
+        currentUser = databaseHelper.getUserByEmail(userEmail);
 
         if (currentUser == null) {
             showError("Không thể lấy thông tin người dùng");
@@ -365,7 +342,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
         }
 
         // Check post quota
-        if (currentUser.getPostQuota() >= 10) {
+        if (currentUser.getPostQuota() >= 20) {
             showQuotaExceededDialog();
             return;
         }
@@ -398,7 +375,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
             boolean success = databaseHelper.insertJob(jobEntity);
 
             if (success) {
-                // Update user's post quota
+                // Update user's post quota - tăng 1 khi đăng tin (logic ban đầu)
                 user.setPostQuota(user.getPostQuota() + 1);
                 databaseHelper.updateUser(databaseHelper.convertEntityToUser(user));
 
@@ -417,14 +394,28 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
         btnSubmit.setEnabled(true);
 
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        builder.setTitle("Hết lượt đăng tin")
-                .setMessage("Bạn đã hết số lượng khuyến mãi đăng tin (10 tin). Vui lòng nạp thêm tiền để đăng tin.")
-                .setPositiveButton("Nạp tiền", (dialog, which) -> {
-                    // TODO: Navigate to payment activity
-                    Toast.makeText(this, "Tính năng nạp tiền đang phát triển", Toast.LENGTH_SHORT).show();
+        AlertDialog show = builder.setTitle("Hết lượt đăng tin")
+                .setMessage("Bạn đã hết số lượng khuyến mãi đăng tin (đã đăng " +
+                        (currentUser.getPostQuota() != null ? currentUser.getPostQuota() : 0) +
+                        "/20 tin). Vui lòng nạp tiền để tiếp tục đăng tin.\n\n💰 100,000đ sẽ giúp bạn có thêm 10 lượt đăng tin nữa")
+                .setPositiveButton("Nạp tiền ngay", (dialog, which) -> {
+                    openPaymentActivity();
                 })
-                .setNegativeButton("Đóng", null)
+                .setNegativeButton("Để sau", null)
+                .setCancelable(false)
                 .show();
+    }
+    
+    private void openPaymentActivity() {
+        try {
+            Intent paymentIntent = new Intent(this, PaymentActivity.class);
+            paymentIntent.putExtra(PaymentActivity.EXTRA_USER_ID, currentUser.getId());
+            paymentIntent.putExtra(PaymentActivity.EXTRA_AMOUNT, 100000); // 100k VND
+            paymentIntent.putExtra(PaymentActivity.EXTRA_DESCRIPTION, "Nạp tiền mua 10 lượt đăng tin việc làm");
+            startActivity(paymentIntent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi mở trang thanh toán: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void showSuccess() {
@@ -462,10 +453,39 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
             
             if (fineLocationGranted || coarseLocationGranted) {
                 tvLocationStatus.setText("Nhấn để lấy vị trí hiện tại");
+                // Tự động sử dụng vị trí mặc định để đảm bảo có vị trí
+                useDefaultVietnamLocation();
             } else {
-                tvLocationStatus.setText("Cần quyền truy cập vị trí để sử dụng tính năng này");
-                tvLocationStatus.setTextColor(getColor(android.R.color.holo_red_dark));
+                // Nếu không có quyền GPS, vẫn sử dụng vị trí mặc định
+                useDefaultVietnamLocation();
+                Toast.makeText(this, "Sử dụng vị trí mặc định vì không có quyền GPS", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == MAP_SELECTION_REQUEST && resultCode == RESULT_OK && data != null) {
+            double latitude = data.getDoubleExtra(MapLocationPickerActivity.EXTRA_LATITUDE, 0);
+            double longitude = data.getDoubleExtra(MapLocationPickerActivity.EXTRA_LONGITUDE, 0);
+            String address = data.getStringExtra(MapLocationPickerActivity.EXTRA_ADDRESS);
+            
+            // Tạo Location object từ tọa độ được chọn
+            selectedLocation = new Location("map_selected");
+            selectedLocation.setLatitude(latitude);
+            selectedLocation.setLongitude(longitude);
+            selectedLocation.setTime(System.currentTimeMillis());
+            
+            selectedLocationName = address;
+            isLocationSelected = true;
+            
+            // Cập nhật UI
+            tvLocationStatus.setText("🗺️ " + selectedLocationName);
+            tvLocationStatus.setTextColor(getColor(android.R.color.holo_blue_dark));
+            
+            Toast.makeText(this, "Đã chọn vị trí từ bản đồ", Toast.LENGTH_SHORT).show();
         }
     }
 
