@@ -236,6 +236,11 @@ public class AdminPostManagementActivity extends AppCompatActivity implements Po
         togglePostStatus(post);
     }
 
+    @Override
+    public void onViewApplicants(JobEntity post) {
+        showApplicantsDialog(post);
+    }
+
     private void togglePostStatus(JobEntity post) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         boolean isActive = post.getIsActive() != null ? post.getIsActive() : false;
@@ -564,6 +569,96 @@ public class AdminPostManagementActivity extends AppCompatActivity implements Po
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showApplicantsDialog(JobEntity post) {
+        progressBar.setVisibility(View.VISIBLE);
+        
+        executorService.execute(() -> {
+            try {
+                // Lấy danh sách ứng viên cho job này
+                List<com.example.projectprm392.database.ApplicationEntity> applications = 
+                    databaseHelper.getApplicationsByJobId(post.getId());
+                
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    
+                    if (applications.isEmpty()) {
+                        // Không có ứng viên
+                        new AlertDialog.Builder(this)
+                            .setTitle("📝 Danh sách ứng viên")
+                            .setMessage("Chưa có ai ứng tuyển vào công việc \"" + post.getTitle() + "\"")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    } else {
+                        // Có ứng viên, hiển thị dialog với danh sách
+                        showApplicantListDialog(post, applications);
+                    }
+                });
+                
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(this, "Lỗi tải danh sách ứng viên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void showApplicantListDialog(JobEntity post, List<com.example.projectprm392.database.ApplicationEntity> applications) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("👥 Ứng viên cho: " + post.getTitle());
+        
+        // Tạo danh sách ứng viên
+        StringBuilder message = new StringBuilder();
+        message.append("Tổng số ứng viên: ").append(applications.size()).append("\n\n");
+        
+        for (int i = 0; i < applications.size(); i++) {
+            com.example.projectprm392.database.ApplicationEntity app = applications.get(i);
+            
+            // Lấy thông tin user
+            UserEntity user = databaseHelper.getUserById(app.getUserId());
+            String userName = user != null ? user.getFullName() : "Không rõ tên";
+            String userEmail = user != null ? user.getEmail() : "Không rõ email";
+            
+            // Trạng thái ứng tuyển
+            String status = app.getStatus() != null ? app.getStatus() : "PENDING";
+            String statusText;
+            switch (status) {
+                case "PENDING": statusText = "⏳ Chờ xét duyệt"; break;
+                case "ACCEPTED": statusText = "✅ Đã chấp nhận"; break;
+                case "REJECTED": statusText = "❌ Đã từ chối"; break;
+                default: statusText = "❓ " + status; break;
+            }
+            
+            message.append(String.format("%d. %s\n", i + 1, userName))
+                   .append("   📧 ").append(userEmail).append("\n")
+                   .append("   📊 ").append(statusText).append("\n");
+            
+            if (app.getMessage() != null && !app.getMessage().trim().isEmpty()) {
+                String shortMessage = app.getMessage().length() > 50 ? 
+                    app.getMessage().substring(0, 50) + "..." : app.getMessage();
+                message.append("   💬 ").append(shortMessage).append("\n");
+            }
+            
+            message.append("\n");
+        }
+        
+        builder.setMessage(message.toString());
+        builder.setPositiveButton("📊 Chi tiết", (dialog, which) -> {
+            // Mở activity quản lý ứng tuyển với filter cho job này
+            Toast.makeText(this, "Chức năng chi tiết đang phát triển", Toast.LENGTH_SHORT).show();
+        });
+        builder.setNegativeButton("Đóng", null);
+        
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Make the dialog scrollable
+        dialog.getWindow().setLayout(
+            (int) (getResources().getDisplayMetrics().widthPixels * 0.9), 
+            (int) (getResources().getDisplayMetrics().heightPixels * 0.7)
+        );
     }
 
     @Override

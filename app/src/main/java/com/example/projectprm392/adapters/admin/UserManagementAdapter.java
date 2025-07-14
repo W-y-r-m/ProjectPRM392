@@ -103,21 +103,38 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         rebuildDisplayItems();
     }
 
-    public void filterByRole(String role) {
+    public void filterByRole(String filterType) {
         filteredUsers.clear();
-        if (role == null || role.equals("ALL")) {
-            // Add all non-admin users
-            for (UserEntity user : users) {
-                if (!"ADMIN".equals(user.getRole())) {
-                    filteredUsers.add(user);
-                }
+        
+        for (UserEntity user : users) {
+            // Skip admin users for all filters
+            if ("ADMIN".equals(user.getRole())) {
+                continue;
             }
-        } else {
-            for (UserEntity user : users) {
-                // Skip admin users and filter by role
-                if (!"ADMIN".equals(user.getRole()) && user.getRole().equals(role)) {
-                    filteredUsers.add(user);
-                }
+            
+            boolean shouldInclude = false;
+            
+            switch (filterType) {
+                case "ALL":
+                    shouldInclude = true;
+                    break;
+                case "EMPLOYER":
+                case "WORKER":
+                    shouldInclude = user.getRole().equals(filterType);
+                    break;
+                case "LOCKED":
+                    shouldInclude = !user.getIsActive(); // Tài khoản đã khóa
+                    break;
+                case "UNVERIFIED":
+                    shouldInclude = !user.getIsVerified(); // Tài khoản chưa xác thực
+                    break;
+                default:
+                    shouldInclude = true;
+                    break;
+            }
+            
+            if (shouldInclude) {
+                filteredUsers.add(user);
             }
         }
         rebuildDisplayItems();

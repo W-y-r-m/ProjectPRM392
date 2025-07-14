@@ -98,6 +98,7 @@
                     android:layout_height="16dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_person"
+                    android:visibility="gone"
                     app:tint="@color/text_secondary" />
 
                 <TextView
@@ -108,6 +109,7 @@
                     android:maxLines="1"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     tools:text="Nguyễn Văn A" />
 
             </LinearLayout>
@@ -223,6 +225,7 @@
                     android:layout_height="14dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_visibility"
+                    android:visibility="gone"
                     app:tint="@color/text_secondary" />
 
                 <TextView
@@ -231,6 +234,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     tools:text="123 lượt xem" />
 
             </LinearLayout>
@@ -253,6 +257,19 @@
                     android:padding="6dp"
                     android:src="@drawable/ic_edit"
                     app:tint="@color/primary" />
+
+                <!-- View Applicants -->
+                <ImageView
+                    android:id="@+id/ivViewApplicants"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/success" />
 
                 <!-- Toggle Status -->
                 <ImageView
