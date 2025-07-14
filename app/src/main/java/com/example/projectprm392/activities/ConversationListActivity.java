@@ -2,7 +2,7 @@ package com.example.projectprm392.activities;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -25,7 +25,7 @@ public class ConversationListActivity extends AppCompatActivity {
     
     private RecyclerView recyclerView;
     private ConversationListAdapter adapter;
-    private TextView tvEmptyState;
+    private LinearLayout tvEmptyState;
     private Toolbar toolbar;
     
     private DatabaseHelper databaseHelper;

@@ -12,6 +12,7 @@
     
     <!-- Phone call permission -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
     
     <!-- File access permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

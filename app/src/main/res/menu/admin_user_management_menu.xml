@@ -18,11 +18,11 @@
         app:showAsAction="never"
         android:orderInCategory="200" />
         
-    <!-- Statistics - hiển thị trong menu overflow -->
+    <!-- Reset Database - hiển thị trong menu overflow -->
     <item
-        android:id="@+id/action_statistics"
-        android:title="Thống kê"
-        android:icon="@android:drawable/ic_menu_agenda"
+        android:id="@+id/action_reset_database"
+        android:title="Reset Database"
+        android:icon="@android:drawable/ic_menu_delete"
         app:showAsAction="never"
         android:orderInCategory="300" />
         

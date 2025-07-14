@@ -713,13 +713,72 @@ public class AdminUserManagementActivity extends AppCompatActivity implements Us
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.admin_user_management_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             // Xử lý nút back trên toolbar
             finish();
             return true;
+        } else if (item.getItemId() == R.id.action_reset_database) {
+            showResetDatabaseDialog();
+            return true;
+        } else if (item.getItemId() == R.id.action_refresh) {
+            loadUsers();
+            Toast.makeText(this, "Đã làm mới dữ liệu", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.action_export) {
+            // TODO: Implement export functionality
+            Toast.makeText(this, "Chức năng xuất dữ liệu sẽ được phát triển", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            // TODO: Implement settings
+            Toast.makeText(this, "Chức năng cài đặt sẽ được phát triển", Toast.LENGTH_SHORT).show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showResetDatabaseDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("⚠️ Reset Database")
+                .setMessage("Bạn có chắc muốn reset toàn bộ database?\n\n" +
+                        "Hành động này sẽ:\n" +
+                        "• Xóa tất cả dữ liệu hiện có\n" +
+                        "• Tạo lại dữ liệu mẫu\n" +
+                        "• Không thể hoàn tác!")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("🔄 Reset", (dialog, which) -> {
+                    resetDatabase();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void resetDatabase() {
+        showLoading(true);
+        executorService.execute(() -> {
+            try {
+                android.util.Log.d("AdminUserManagement", "Starting database reset...");
+                databaseHelper.resetAndInitializeSampleData();
+                
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(this, "✅ Reset database thành công!", Toast.LENGTH_SHORT).show();
+                    loadUsers(); // Reload users
+                });
+            } catch (Exception e) {
+                android.util.Log.e("AdminUserManagement", "Error resetting database: " + e.getMessage(), e);
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(this, "❌ Lỗi reset database: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override
