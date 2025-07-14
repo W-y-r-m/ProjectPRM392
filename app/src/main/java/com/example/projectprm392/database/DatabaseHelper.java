@@ -440,48 +440,168 @@ public class DatabaseHelper {
     public void initializeSampleData() {
         // Kiểm tra xem đã có data chưa
         try {
-            List<UserEntity> users = userDao.getAll(); // Use getAll() instead of getAllUsers()
+            List<UserEntity> users = userDao.getAll();
             if (users.isEmpty()) {
                 Log.d(TAG, "Initializing sample data...");
 
-                // Tạo admin user
+                // 1. Tạo admin user
                 UserEntity admin = new UserEntity();
                 admin.setUserId(UUID.randomUUID().toString());
                 admin.setEmail("admin@job.com");
                 admin.setPassword("admin123");
                 admin.setFullName("Administrator");
                 admin.setPhoneNumber("0123456789");
-                // admin.setAddress("Admin Office"); // Comment out since UserEntity doesn't
-                // have setAddress()
                 admin.setDescription("System Administrator");
-                admin.setRole("admin");
+                admin.setRole("ADMIN");
                 admin.setCreatedAt(new Date());
-                // admin.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have
-                // setUpdatedAt()
                 admin.setIsVerified(true);
+                admin.setIsActive(true);
+                admin.setGender(true); // Male
                 userDao.insert(admin);
 
-                // Tạo sample jobs
-                JobEntity sampleJob = new JobEntity();
-                sampleJob.setTitle("Sample Job");
-                sampleJob.setDescription("This is a sample job posting");
-                // sampleJob.setCompanyName("Sample Company"); // Comment out since JobEntity
-                // doesn't have setCompanyName()
-                sampleJob.setLocation("Sample Location");
-                sampleJob.setSalary("$1000-2000");
-                sampleJob.setJobType("OFFERING");
-                // sampleJob.setCreatedBy(admin.getUserId()); // Comment out since JobEntity
-                // doesn't have setCreatedBy()
-                sampleJob.setCreatedAt(new Date());
-                // sampleJob.setUpdatedAt(new Date()); // Comment out since JobEntity doesn't
-                // have setUpdatedAt()
-                sampleJob.setIsActive(true);
-                jobDao.insert(sampleJob);
+                // 2. Tạo employer users
+                UserEntity employer1 = new UserEntity();
+                employer1.setUserId(UUID.randomUUID().toString());
+                employer1.setEmail("employer1@company.com");
+                employer1.setPassword("123456");
+                employer1.setFullName("Nguyễn Văn A");
+                employer1.setPhoneNumber("0987654321");
+                employer1.setDescription("Quản lý nhân sự tại Công ty ABC");
+                employer1.setRole("EMPLOYER");
+                employer1.setCreatedAt(new Date());
+                employer1.setIsVerified(true);
+                employer1.setIsActive(true);
+                employer1.setGender(true);
+                employer1.setPostQuota(100);
+                userDao.insert(employer1);
 
-                Log.d(TAG, "Sample data initialized successfully");
+                UserEntity employer2 = new UserEntity();
+                employer2.setUserId(UUID.randomUUID().toString());
+                employer2.setEmail("employer2@startup.com");
+                employer2.setPassword("123456");
+                employer2.setFullName("Trần Thị B");
+                employer2.setPhoneNumber("0976543210");
+                employer2.setDescription("Founder của Startup XYZ");
+                employer2.setRole("EMPLOYER");
+                employer2.setCreatedAt(new Date());
+                employer2.setIsVerified(true);
+                employer2.setIsActive(true);
+                employer2.setGender(false);
+                employer2.setPostQuota(50);
+                userDao.insert(employer2);
+
+                // 3. Tạo worker users
+                UserEntity worker1 = new UserEntity();
+                worker1.setUserId(UUID.randomUUID().toString());
+                worker1.setEmail("worker1@gmail.com");
+                worker1.setPassword("123456");
+                worker1.setFullName("Lê Văn C");
+                worker1.setPhoneNumber("0965432109");
+                worker1.setDescription("Lập trình viên Java với 3 năm kinh nghiệm");
+                worker1.setRole("WORKER");
+                worker1.setCreatedAt(new Date());
+                worker1.setIsVerified(true);
+                worker1.setIsActive(true);
+                worker1.setGender(true);
+                userDao.insert(worker1);
+
+                UserEntity worker2 = new UserEntity();
+                worker2.setUserId(UUID.randomUUID().toString());
+                worker2.setEmail("worker2@gmail.com");
+                worker2.setPassword("123456");
+                worker2.setFullName("Phạm Thị D");
+                worker2.setPhoneNumber("0954321098");
+                worker2.setDescription("Designer UI/UX chuyên nghiệp");
+                worker2.setRole("WORKER");
+                worker2.setCreatedAt(new Date());
+                worker2.setIsVerified(true);
+                worker2.setIsActive(true);
+                worker2.setGender(false);
+                userDao.insert(worker2);
+
+                UserEntity worker3 = new UserEntity();
+                worker3.setUserId(UUID.randomUUID().toString());
+                worker3.setEmail("worker3@gmail.com");
+                worker3.setPassword("123456");
+                worker3.setFullName("Hoàng Văn E");
+                worker3.setPhoneNumber("0943210987");
+                worker3.setDescription("Thợ sửa chữa điện tử");
+                worker3.setRole("WORKER");
+                worker3.setCreatedAt(new Date());
+                worker3.setIsVerified(false); // Chưa xác thực
+                worker3.setIsActive(true);
+                worker3.setGender(true);
+                userDao.insert(worker3);
+
+                UserEntity worker4 = new UserEntity();
+                worker4.setUserId(UUID.randomUUID().toString());
+                worker4.setEmail("worker4@gmail.com");
+                worker4.setPassword("123456");
+                worker4.setFullName("Đặng Thị F");
+                worker4.setPhoneNumber("0932109876");
+                worker4.setDescription("Kế toán viên");
+                worker4.setRole("WORKER");
+                worker4.setCreatedAt(new Date());
+                worker4.setIsVerified(true);
+                worker4.setIsActive(false); // Tài khoản bị khóa
+                worker4.setGender(false);
+                userDao.insert(worker4);
+
+                // 4. Tạo sample jobs
+                JobEntity job1 = new JobEntity();
+                job1.setTitle("Tuyển Lập trình viên Java");
+                job1.setDescription("Cần tuyển lập trình viên Java có kinh nghiệm 2+ năm");
+                job1.setLocation("Hà Nội");
+                job1.setSalary("15-25 triệu VND");
+                job1.setJobType("OFFERING");
+                job1.setCreatedAt(new Date());
+                job1.setIsActive(true);
+                jobDao.insert(job1);
+
+                JobEntity job2 = new JobEntity();
+                job2.setTitle("Cần thuê Designer");
+                job2.setDescription("Thiết kế logo và banner cho startup");
+                job2.setLocation("TP.HCM");
+                job2.setSalary("5-10 triệu VND");
+                job2.setJobType("REQUESTING");
+                job2.setCreatedAt(new Date());
+                job2.setIsActive(true);
+                jobDao.insert(job2);
+
+                Log.d(TAG, "Sample data initialized successfully with " + 
+                    "1 admin, 2 employers, 4 workers, and 2 jobs");
             }
         } catch (Exception e) {
             Log.e(TAG, "Error initializing sample data", e);
+        }
+    }
+
+    /**
+     * Force reset and reinitialize database with fresh sample data
+     * Useful for testing and development
+     */
+    public void resetAndInitializeSampleData() {
+        try {
+            Log.d(TAG, "Resetting database and initializing fresh sample data...");
+            
+            // Clear main tables (only the ones we have deleteAll methods for)
+            userDao.deleteAll();
+            jobDao.deleteAll();
+            
+            // For other tables, we can delete specific records if needed
+            // applicationDao doesn't have deleteAll(), so skip it
+            // reportDao doesn't have deleteAll(), so skip it  
+            // chatDao doesn't have deleteAll(), so skip it
+            
+            Log.d(TAG, "Main tables cleared (users, jobs)");
+            
+            // Force reinitialize sample data
+            initializeSampleData();
+            
+            Log.d(TAG, "Database reset and reinitialized successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error resetting database", e);
+            throw e;
         }
     }
 
