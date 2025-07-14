@@ -29,6 +29,7 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
         void onEditPost(JobEntity post);
         void onDeletePost(JobEntity post);
         void onTogglePostStatus(JobEntity post);
+        void onViewApplicants(JobEntity post);
     }
 
     public PostManagementAdapter(OnPostActionListener listener) {
@@ -123,7 +124,7 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
         private TextView tvPostTitle, tvPostAuthor, tvPostType, tvPostLocation, 
                         tvPostSalary, tvPostDate, tvPostViews;
         private Chip chipStatus;
-        private ImageView ivEdit, ivDelete, ivToggleStatus;
+        private ImageView ivEdit, ivDelete, ivToggleStatus, ivViewApplicants;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -139,6 +140,7 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
             ivEdit = itemView.findViewById(R.id.ivEdit);
             ivDelete = itemView.findViewById(R.id.ivDelete);
             ivToggleStatus = itemView.findViewById(R.id.ivToggleStatus);
+            ivViewApplicants = itemView.findViewById(R.id.ivViewApplicants);
         }
 
         public void bind(JobEntity post, OnPostActionListener listener) {
@@ -151,8 +153,8 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
             String postTypeDisplay = "JOB_POSTING".equals(post.getPostType()) ? "Tuyển dụng" : "Tìm việc";
             tvPostType.setText(postTypeDisplay);
             
-            // Author (will be retrieved separately if needed)
-            tvPostAuthor.setText("ID: " + post.getUserId());
+            // Author - hidden in layout, no need to set text
+            // tvPostAuthor.setText("ID: " + post.getUserId());
             
             // Date
             if (post.getCreatedAt() != null) {
@@ -162,8 +164,8 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
                 tvPostDate.setText("Không rõ");
             }
             
-            // Views count (placeholder since JobEntity doesn't have this field)
-            tvPostViews.setText("0 lượt xem");
+            // Views count - hidden in layout, no need to set text
+            // tvPostViews.setText("0 lượt xem");
             
             // Status
             boolean isActive = post.getIsActive() != null ? post.getIsActive() : false;
@@ -189,6 +191,12 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
             ivEdit.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onEditPost(post);
+                }
+            });
+            
+            ivViewApplicants.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onViewApplicants(post);
                 }
             });
             

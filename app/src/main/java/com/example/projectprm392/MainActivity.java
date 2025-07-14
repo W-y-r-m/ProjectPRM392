@@ -17,15 +17,21 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.projectprm392.activities.HomeActivity;
 import com.example.projectprm392.activities.admin.AdminDashboardActivity;
 import com.example.projectprm392.controllers.LoginController;
+import com.example.projectprm392.database.DatabaseHelper;
 import com.example.projectprm392.models.User;
 import com.example.projectprm392.utils.SessionManager;
 import com.example.projectprm392.views.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     private LoginController loginController;
     private SessionManager sessionManager;
+    private DatabaseHelper databaseHelper;
+    private ExecutorService executorService;
     private TextView tvWelcome;
     private MaterialButton btnLogout;
     private Toolbar toolbar;
@@ -45,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupToolbar();
         setupController();
+        
+        // Auto initialize sample data on app start
+        autoInitializeSampleData();
+        
         checkLoginStatus();
         
         // Check user role and redirect accordingly
@@ -67,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupController() {
         loginController = new LoginController(this);
         sessionManager = new SessionManager(this);
+        databaseHelper = new DatabaseHelper(this);
+        executorService = Executors.newFixedThreadPool(2);
     }
 
     private void redirectToAppropriateActivity() {
@@ -135,5 +147,35 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void autoInitializeSampleData() {
+        executorService.execute(() -> {
+            try {
+                // Kiểm tra xem đã có dữ liệu chưa (chỉ kiểm tra cơ bản)
+                int totalUsers = databaseHelper.getAllUsers().size();
+                int totalJobs = databaseHelper.getAllJobs().size();
+                
+                // Nếu chưa có dữ liệu hoặc có ít dữ liệu thì tự động tạo
+                if (totalUsers <= 1 || totalJobs == 0) {
+                    android.util.Log.d("MainActivity", "Auto-initializing sample data...");
+                    
+                    // Tự động tạo dữ liệu mẫu
+                    databaseHelper.resetAndInitializeSampleData();
+                    
+                    android.util.Log.d("MainActivity", "Sample data initialized successfully");
+                }
+            } catch (Exception e) {
+                android.util.Log.e("MainActivity", "Error auto-initializing sample data: " + e.getMessage(), e);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+        }
     }
 }
