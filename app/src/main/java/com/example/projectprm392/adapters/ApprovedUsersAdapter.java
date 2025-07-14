@@ -10,11 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectprm392.R;
-import com.example.projectprm392.database.AppDatabase;
-import com.example.projectprm392.database.ReviewEntity;
 import com.example.projectprm392.database.UserEntity;
 import com.example.projectprm392.models.User;
-import com.example.projectprm392.ui.ReviewDialog;
 
 import java.util.List;
 
@@ -46,18 +43,7 @@ public class ApprovedUsersAdapter extends RecyclerView.Adapter<ApprovedUsersAdap
         });
         // Xử lý nút đánh giá
         holder.btnReview.setOnClickListener(v -> {
-            ReviewDialog dialog = new ReviewDialog(context, (comment, rating) -> {
-                // Lưu review vào database
-                ReviewEntity review = new ReviewEntity(
-                        user.getId(), // userId
-                        Integer.parseInt(jobId), // jobId
-                        comment,
-                        rating
-                );
-                AppDatabase db = AppDatabase.getDatabase(context);
-                db.reviewDao().insertReview(review);
-            });
-            dialog.show();
+            // TODO: Mở dialog hoặc activity đánh giá user
         });
     }
 
