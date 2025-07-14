@@ -44,7 +44,7 @@ public class ApprovedUsersActivity extends AppCompatActivity {
         }
 
         // 3. Hiển thị lên RecyclerView
-        adapter = new com.example.projectprm392.adapters.ApprovedUsersAdapter(approvedUsers, String.valueOf(jobId));
+        adapter = new com.example.projectprm392.adapters.ApprovedUsersAdapter(approvedUsers, jobId);
         recyclerView.setAdapter(adapter);
     }
 
