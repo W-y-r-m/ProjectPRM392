@@ -233,4 +233,25 @@ public class UserEntity {
     public void setVerificationCodeExpiresAt(Date verificationCodeExpiresAt) {
         this.verificationCodeExpiresAt = verificationCodeExpiresAt;
     }
+
+    // Business logic methods for quota management
+    public boolean needsTopUp() {
+        return postQuota != null && postQuota >= 20;
+    }
+
+    public boolean canPost() {
+        return postQuota != null && postQuota > 0;
+    }
+
+    public void reducePostQuotaByPayment(int amount) {
+        if (postQuota != null) {
+            postQuota = Math.max(0, postQuota - amount);
+        }
+    }
+
+    public void decrementPostQuota() {
+        if (postQuota != null && postQuota > 0) {
+            postQuota--;
+        }
+    }
 }
