@@ -184,16 +184,16 @@ public class User {
 
     // Utility methods cho post quota
     public boolean needsTopUp() {
-        return postQuota != null && postQuota >= 20; // Thay đổi từ > 20 thành >= 20
+        return postQuota != null && postQuota >= 20; // Cần nạp tiền khi >= 20
     }
 
     public boolean canPost() {
-        return postQuota != null && postQuota < 20; // Thay đổi từ <= 20 thành < 20
+        return postQuota != null && postQuota < 20; // Có thể đăng khi < 20
     }
 
     public void usePostQuota() {
-        if (postQuota != null && postQuota > 0) {
-            postQuota--;
+        if (postQuota != null && postQuota < 20) {
+            postQuota++; // Tăng quota khi đăng tin (đếm lên)
         }
     }
 
@@ -202,6 +202,14 @@ public class User {
             postQuota = amount;
         } else {
             postQuota += amount;
+        }
+    }
+    
+    public void reducePostQuotaByPayment(int amount) {
+        if (postQuota == null) {
+            postQuota = 0;
+        } else {
+            postQuota = Math.max(0, postQuota - amount); // Trừ quota khi nạp tiền
         }
     }
 
