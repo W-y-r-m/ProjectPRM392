@@ -7,8 +7,7 @@ import androidx.room.TypeConverters;
 import android.content.Context;
 
 @Database(entities = { UserEntity.class, JobEntity.class, ApplicationEntity.class, PostHistoryEntity.class,
-
-        ReportEntity.class, ChatEntity.class }, version = 12, exportSchema = false)
+        ReportEntity.class, ChatEntity.class, ReviewEntity.class }, version = 12, exportSchema = false)
 
 @TypeConverters({ Converters.class })
 

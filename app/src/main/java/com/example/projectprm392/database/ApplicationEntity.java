@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.annotation.NonNull;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 
 import java.util.UUID;
 
@@ -54,6 +55,7 @@ public class ApplicationEntity {
         this.appliedAt = System.currentTimeMillis();
     }
 
+    @Ignore
     public ApplicationEntity(int id, @NonNull String applicationId, int jobId, int userId, String message,
             String otherFileUrl, String cvFileName, String cvFileUri, String status, String reply, long appliedAt) {
         this.id = id;

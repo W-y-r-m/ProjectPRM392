@@ -303,7 +303,7 @@ public class DatabaseHelper {
         List<UserEntity> users = getUsersByRole("WORKER");
         List<JobEntity> jobs = getAllJobs();
 
-        if (!users.isEmpty() && !jobs.isEmpty()) {
+        if (!users.isEmpty() && !jobs.isEmpty() && users.size() >= 3 && jobs.size() >= 5) {
             UserEntity worker1 = users.get(0);
             UserEntity worker2 = users.get(1);
             UserEntity worker3 = users.get(2);
@@ -336,8 +336,8 @@ public class DatabaseHelper {
                 null, // cvFileUri
                 "pending",
                 null,
-                now);
-
+                now
+        );
     }
 
     public void close() {
@@ -718,6 +718,7 @@ public class DatabaseHelper {
         }
         
         Log.d(TAG, "=== END DEBUGGING COORDINATES ===");
+    }
 
     /**
      * Tạo thêm dữ liệu mẫu phong phú hơn cho demo
@@ -907,6 +908,5 @@ public class DatabaseHelper {
             
             insertReport(report);
         }
-
     }
 }

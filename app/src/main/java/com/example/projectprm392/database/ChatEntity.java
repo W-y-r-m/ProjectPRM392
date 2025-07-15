@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.annotation.NonNull;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 
 import java.util.UUID;
 
@@ -45,6 +46,7 @@ public class ChatEntity {
         this.sentAt = System.currentTimeMillis();
     }
 
+    @Ignore
     public ChatEntity(int id, @NonNull String messageId, int senderId, int receiverId, 
                      String content, long sentAt, int jobId, boolean isRead) {
         this.id = id;
