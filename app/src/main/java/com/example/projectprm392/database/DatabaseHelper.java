@@ -404,10 +404,13 @@ public class DatabaseHelper {
         entity.setPassword(user.getPassword());
         entity.setFullName(user.getFullName());
         entity.setPhoneNumber(user.getPhoneNumber());
-        // entity.setAddress(user.getAddress()); // Comment out since User doesn't have
-        // getAddress()
+        entity.setGender(user.getGender());
+        entity.setAddress(user.getAddress());
         entity.setDescription(user.getDescription());
         entity.setRole(user.getRole());
+        entity.setPostQuota(user.getPostQuota());
+        entity.setCurrentLatitude(user.getCurrentLatitude());
+        entity.setCurrentLongitude(user.getCurrentLongitude());
         entity.setCreatedAt(user.getCreatedAt() != null ? user.getCreatedAt() : new Date());
         // entity.setUpdatedAt(new Date()); // Comment out since UserEntity doesn't have
         // setUpdatedAt()
@@ -425,10 +428,13 @@ public class DatabaseHelper {
         user.setPassword(entity.getPassword());
         user.setFullName(entity.getFullName());
         user.setPhoneNumber(entity.getPhoneNumber());
-        // user.setAddress(entity.getAddress()); // Comment out since User doesn't have
-        // setAddress()
+        user.setGender(entity.getGender());
+        user.setAddress(entity.getAddress());
         user.setDescription(entity.getDescription());
         user.setRole(entity.getRole());
+        user.setPostQuota(entity.getPostQuota());
+        user.setCurrentLatitude(entity.getCurrentLatitude());
+        user.setCurrentLongitude(entity.getCurrentLongitude());
         user.setCreatedAt(entity.getCreatedAt());
         // user.setUpdatedAt(entity.getUpdatedAt()); // Comment out since User doesn't
         // have setUpdatedAt()
@@ -686,6 +692,33 @@ public class DatabaseHelper {
         return chatDao.getUnreadMessageCount(userId);
     }
 
+
+    // Debug method to check coordinates
+    public void debugCoordinates() {
+        Log.d(TAG, "=== DEBUGGING COORDINATES ===");
+        
+        // Check all users
+        List<UserEntity> users = userDao.getAll();
+        for (UserEntity user : users) {
+            if (user.getCurrentLatitude() != null && user.getCurrentLongitude() != null) {
+                Log.d(TAG, "User " + user.getEmail() + " coordinates: " + 
+                      user.getCurrentLatitude() + ", " + user.getCurrentLongitude() + 
+                      " Address: " + user.getAddress());
+            }
+        }
+        
+        // Check all jobs
+        List<JobEntity> jobs = jobDao.getAll();
+        for (JobEntity job : jobs) {
+            if (job.getLocationLatitude() != null && job.getLocationLongitude() != null) {
+                Log.d(TAG, "Job " + job.getTitle() + " coordinates: " + 
+                      job.getLocationLatitude() + ", " + job.getLocationLongitude() + 
+                      " Location: " + job.getLocation());
+            }
+        }
+        
+        Log.d(TAG, "=== END DEBUGGING COORDINATES ===");
+
     /**
      * Tạo thêm dữ liệu mẫu phong phú hơn cho demo
      * Bao gồm nhiều công việc, báo cáo và ứng tuyển
@@ -874,5 +907,6 @@ public class DatabaseHelper {
             
             insertReport(report);
         }
+
     }
 }

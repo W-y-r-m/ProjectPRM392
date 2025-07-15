@@ -128,11 +128,48 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.JobViewHolder> {
             
             // Location with real distance calculation
             if (job.getLocationLatitude() != null && job.getLocationLongitude() != null && userLocation != null) {
-                Location jobLocation = new Location("job");
-                jobLocation.setLatitude(job.getLocationLatitude());
-                jobLocation.setLongitude(job.getLocationLongitude());
+                double jobLat = job.getLocationLatitude();
+                double jobLng = job.getLocationLongitude();
+                double userLat = userLocation.getLatitude();
+                double userLng = userLocation.getLongitude();
                 
-                float distance = userLocation.distanceTo(jobLocation) / 1000; // Convert to km
+                // EXPERIMENTAL FIX: Check if coordinates might be swapped
+                boolean jobCoordsSwapped = false;
+                boolean userCoordsSwapped = false;
+                
+                if (jobLat > 50 && jobLng < 30) {
+                    android.util.Log.w("JobAdapter", "Job coordinates seem swapped! Trying to fix");
+                    double temp = jobLat;
+                    jobLat = jobLng;
+                    jobLng = temp;
+                    jobCoordsSwapped = true;
+                }
+                
+                if (userLat > 50 && userLng < 30) {
+                    android.util.Log.w("JobAdapter", "User coordinates seem swapped! Trying to fix");
+                    double temp = userLat;
+                    userLat = userLng;
+                    userLng = temp;
+                    userCoordsSwapped = true;
+                }
+                
+                Location jobLocation = new Location("job");
+                jobLocation.setLatitude(jobLat);
+                jobLocation.setLongitude(jobLng);
+                
+                Location userLocationFixed = new Location("user");
+                userLocationFixed.setLatitude(userLat);
+                userLocationFixed.setLongitude(userLng);
+                
+                float distance = userLocationFixed.distanceTo(jobLocation) / 1000; // Convert to km
+                
+                // Debug logging
+                android.util.Log.d("JobAdapter", "=== DISTANCE CALCULATION DEBUG ===");
+                android.util.Log.d("JobAdapter", "Job: " + job.getTitle());
+                android.util.Log.d("JobAdapter", "User location: " + userLat + ", " + userLng + (userCoordsSwapped ? " (FIXED)" : ""));
+                android.util.Log.d("JobAdapter", "Job location: " + jobLat + ", " + jobLng + (jobCoordsSwapped ? " (FIXED)" : ""));
+                android.util.Log.d("JobAdapter", "Distance: " + distance + " km");
+                
                 tvLocation.setText(String.format("Cách bạn ~%.1fkm", distance));
             } else {
                 tvLocation.setText(job.getLocationName() != null ? job.getLocationName() : "Vị trí chưa xác định");

@@ -47,6 +47,9 @@ public class UserEntity {
     @ColumnInfo(name = "current_longitude")
     private Double currentLongitude;
     
+    @ColumnInfo(name = "address")
+    private String address;
+    
     @ColumnInfo(name = "created_at")
     private Date createdAt;
     
@@ -67,7 +70,7 @@ public class UserEntity {
 
     public UserEntity(String userId, String email, String password, String fullName, 
                      String phoneNumber, Boolean gender, String role, String levelOfViolation, String description, 
-                     Integer postQuota, Double currentLatitude, Double currentLongitude, 
+                     Integer postQuota, Double currentLatitude, Double currentLongitude, String address,
                      Date createdAt, Boolean isActive, boolean isVerified, String verificationCode, 
                      Date verificationCodeExpiresAt) {
         this.userId = userId;
@@ -82,6 +85,7 @@ public class UserEntity {
         this.postQuota = postQuota;
         this.currentLatitude = currentLatitude;
         this.currentLongitude = currentLongitude;
+        this.address = address;
         this.createdAt = createdAt;
         this.isActive = isActive;
         this.isVerified = isVerified;
@@ -192,6 +196,14 @@ public class UserEntity {
 
     public void setCurrentLongitude(Double currentLongitude) {
         this.currentLongitude = currentLongitude;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Date getCreatedAt() {
