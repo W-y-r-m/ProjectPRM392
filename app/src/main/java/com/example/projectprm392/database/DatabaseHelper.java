@@ -604,7 +604,13 @@ public class DatabaseHelper {
             // Force reinitialize sample data
             initializeSampleData();
             
-            Log.d(TAG, "Database reset and reinitialized successfully");
+            // Create additional sample applications
+            createSampleApplications();
+            
+            // Create enhanced sample data (more jobs, applications, reports)
+            createEnhancedSampleData();
+            
+            Log.d(TAG, "Database reset and reinitialized successfully with enhanced data");
         } catch (Exception e) {
             Log.e(TAG, "Error resetting database", e);
             throw e;
@@ -686,6 +692,7 @@ public class DatabaseHelper {
         return chatDao.getUnreadMessageCount(userId);
     }
 
+
     // Debug method to check coordinates
     public void debugCoordinates() {
         Log.d(TAG, "=== DEBUGGING COORDINATES ===");
@@ -711,5 +718,195 @@ public class DatabaseHelper {
         }
         
         Log.d(TAG, "=== END DEBUGGING COORDINATES ===");
+
+    /**
+     * Tạo thêm dữ liệu mẫu phong phú hơn cho demo
+     * Bao gồm nhiều công việc, báo cáo và ứng tuyển
+     */
+    public void createEnhancedSampleData() {
+        try {
+            Log.d(TAG, "Creating enhanced sample data...");
+            
+            // Lấy danh sách users hiện tại
+            List<UserEntity> users = getAllUsers();
+            List<UserEntity> employers = getUsersByRole("EMPLOYER");
+            List<UserEntity> workers = getUsersByRole("WORKER");
+            
+            if (employers.isEmpty() || workers.isEmpty()) {
+                Log.w(TAG, "Not enough users to create enhanced data");
+                return;
+            }
+            
+            // 1. Tạo thêm nhiều công việc đa dạng
+            createMoreJobs(employers);
+            
+            // 2. Tạo nhiều ứng tuyển
+            createMoreApplications(workers);
+            
+            // 3. Tạo nhiều báo cáo
+            createMoreReports(users);
+            
+            Log.d(TAG, "Enhanced sample data created successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating enhanced sample data", e);
+        }
+    }
+    
+    private void createMoreJobs(List<UserEntity> employers) {
+        if (employers.isEmpty()) return;
+        
+        String[] jobTitles = {
+            "Tuyển Nhân viên Sale", "Cần Thợ xây dựng", "Tuyển Nhân viên Marketing",
+            "Cần Lập trình viên Mobile", "Tuyển Kế toán viên", "Cần Shipper giao hàng",
+            "Tuyển Nhân viên Khách sạn", "Cần Thợ điện", "Tuyển Content Creator",
+            "Cần Phiên dịch viên", "Tuyển Nhân viên IT Support", "Cần Thợ may",
+            "Tuyển Giáo viên Tiếng Anh", "Cần Tài xế Grab", "Tuyển Đầu bếp"
+        };
+        
+        String[] descriptions = {
+            "Tư vấn và bán sản phẩm cho khách hàng, yêu cầu kỹ năng giao tiếp tốt",
+            "Xây dựng nhà ở và công trình, cần có kinh nghiệm 2+ năm",
+            "Quảng bá thương hiệu trên các kênh digital, ưu tiên có kinh nghiệm",
+            "Phát triển ứng dụng di động iOS/Android, thành thạo Swift/Kotlin",
+            "Xử lý sổ sách, báo cáo tài chính, yêu cầu tốt nghiệp chuyên ngành",
+            "Giao hàng trong thành phố, có xe máy và giấy phép lái xe",
+            "Phục vụ khách hàng tại khách sạn, ưu tiên biết tiếng Anh",
+            "Sửa chữa điện dân dụng và công nghiệp, có chứng chỉ an toàn",
+            "Tạo nội dung cho social media, có kinh nghiệm với Photoshop/Canva",
+            "Phiên dịch Anh-Việt cho các cuộc họp và sự kiện",
+            "Hỗ trợ kỹ thuật IT, xử lý sự cố máy tính và mạng",
+            "May quần áo theo yêu cầu, thành thạo máy may công nghiệp",
+            "Dạy tiếng Anh cho trẻ em và người lớn, có IELTS 6.5+",
+            "Lái xe Grab/Be, có xe oto và giấy phép B2",
+            "Nấu ăn cho nhà hàng, có kinh nghiệm với món Việt và Âu"
+        };
+        
+        String[] locations = {
+            "Quận 1, TP.HCM", "Quận 3, TP.HCM", "Quận 7, TP.HCM", 
+            "Hà Nội", "Đà Nẵng", "Cần Thơ", "Vũng Tàu", "Nha Trang"
+        };
+        
+        String[] salaries = {
+            "8-12 triệu VND", "10-15 triệu VND", "12-18 triệu VND",
+            "15-25 triệu VND", "20-30 triệu VND", "500K-1M/ngày",
+            "300K-500K/ngày", "200K-400K/ngày", "5-8 triệu VND"
+        };
+        
+        String[] jobTypes = {"FULL_TIME", "PART_TIME", "FREELANCE", "CONTRACT"};
+        String[] experienceLevels = {"Không yêu cầu", "1-2 năm", "2-3 năm", "3+ năm", "5+ năm"};
+        
+        for (int i = 0; i < jobTitles.length; i++) {
+            UserEntity employer = employers.get(i % employers.size());
+            
+            JobEntity job = new JobEntity();
+            job.setJobId(UUID.randomUUID().toString());
+            job.setUserId(employer.getId());
+            job.setTitle(jobTitles[i]);
+            job.setDescription(descriptions[i]);
+            job.setLocation(locations[i % locations.length]);
+            job.setSalary(salaries[i % salaries.length]);
+            job.setJobType(jobTypes[i % jobTypes.length]);
+            job.setExperienceLevel(experienceLevels[i % experienceLevels.length]);
+            job.setNeededAmount(1 + (i % 3)); // 1-3 người
+            job.setWorkingTime(i % 2 == 0 ? "8h/ngày" : "Linh hoạt");
+            job.setPostType(i % 3 == 0 ? "JOB_SEEKING" : "JOB_POSTING");
+            job.setStatus("ACTIVE");
+            job.setCreatedAt(new Date(System.currentTimeMillis() - (long)(Math.random() * 30 * 24 * 60 * 60 * 1000))); // Random trong 30 ngày qua
+            job.setIsActive(i % 10 != 0); // 90% active, 10% inactive
+            
+            insertJob(job);
+        }
+    }
+    
+    private void createMoreApplications(List<UserEntity> workers) {
+        List<JobEntity> jobs = getAllJobs();
+        if (workers.isEmpty() || jobs.isEmpty()) return;
+        
+        String[] applicationMessages = {
+            "Em rất quan tâm đến vị trí này và hy vọng được góp phần vào sự phát triển của công ty.",
+            "Với kinh nghiệm và kỹ năng của mình, em tin rằng em có thể đảm nhận tốt công việc này.",
+            "Em đã đọc kỹ mô tả công việc và thấy rất phù hợp với khả năng của bản thân.",
+            "Tôi có nhiều năm kinh nghiệm trong lĩnh vực này và mong muốn được thử thách bản thân.",
+            "Đây là cơ hội tốt để tôi áp dụng những kiến thức đã học và phát triển sự nghiệp.",
+            "Em rất hứng thú với môi trường làm việc năng động và chuyên nghiệp của công ty.",
+            "Tôi tin rằng mình có thể học hỏi và đóng góp nhiều cho vị trí này.",
+            "Em có thời gian linh hoạt và sẵn sàng làm việc theo yêu cầu của công ty."
+        };
+        
+        String[] statuses = {"pending", "approved", "rejected"};
+        
+        // Tạo 25-30 applications
+        for (int i = 0; i < 28; i++) {
+            UserEntity worker = workers.get(i % workers.size());
+            JobEntity job = jobs.get(i % jobs.size());
+            
+            // Tránh trùng lặp (worker đã ứng tuyển job này)
+            List<ApplicationEntity> existingApps = getApplicationsByUserId(worker.getId());
+            boolean alreadyApplied = existingApps.stream()
+                .anyMatch(app -> app.getJobId() == job.getId());
+            
+            if (!alreadyApplied) {
+                ApplicationEntity application = new ApplicationEntity();
+                application.setApplicationId(UUID.randomUUID().toString());
+                application.setJobId(job.getId());
+                application.setUserId(worker.getId());
+                application.setMessage(applicationMessages[i % applicationMessages.length]);
+                application.setStatus(statuses[i % statuses.length]);
+                application.setAppliedAt(System.currentTimeMillis() - (long)(Math.random() * 15 * 24 * 60 * 60 * 1000)); // Random trong 15 ngày qua
+                
+                insertApplication(application);
+            }
+        }
+    }
+    
+    private void createMoreReports(List<UserEntity> users) {
+        List<JobEntity> jobs = getAllJobs();
+        if (users.size() < 2) return;
+        
+        String[] reportReasons = {
+            "Bài đăng có nội dung không phù hợp, có dấu hiệu lừa đảo với mức lương quá cao so với yêu cầu công việc.",
+            "Người dùng này đã gửi tin nhắn quấy rối và có hành vi không phù hợp trong quá trình liên lạc.",
+            "Thông tin công việc không chính xác, yêu cầu nộp phí trước khi làm việc.",
+            "Người dùng spam nhiều bài đăng trùng lặp trong thời gian ngắn.",
+            "Nội dung bài đăng có yếu tố phân biệt giới tính, độ tuổi không hợp lý.",
+            "Địa chỉ và thông tin liên lạc của nhà tuyển dụng không chính xác.",
+            "Yêu cầu công việc không rõ ràng, có dấu hiệu thu phí đào tạo.",
+            "Người dùng có thái độ thiếu tôn trọng khi trao đổi về công việc.",
+            "Bài đăng tuyển dụng có nội dung vi phạm pháp luật lao động.",
+            "Thông tin lương thưởng và chế độ đãi ngộ không minh bạch."
+        };
+        
+        String[] statuses = {"pending", "resolved", "rejected"};
+        
+        // Tạo 12-15 reports
+        for (int i = 0; i < 13; i++) {
+            UserEntity reporter = users.get(i % users.size());
+            UserEntity targetUser;
+            
+            // Đảm bảo reporter khác target user
+            do {
+                targetUser = users.get((i + 1 + (int)(Math.random() * (users.size() - 1))) % users.size());
+            } while (reporter.getId() == targetUser.getId());
+            
+            // 50% reports có liên quan đến job cụ thể
+            String jobId = "";
+            if (!jobs.isEmpty() && i % 2 == 0) {
+                JobEntity job = jobs.get(i % jobs.size());
+                jobId = job.getJobId();
+            }
+            
+            ReportEntity report = new ReportEntity(
+                reporter.getUserId(),
+                targetUser.getUserId(), 
+                jobId,
+                reportReasons[i % reportReasons.length]
+            );
+            
+            report.status = statuses[i % statuses.length];
+            report.createdAt = System.currentTimeMillis() - (long)(Math.random() * 20 * 24 * 60 * 60 * 1000); // Random trong 20 ngày qua
+            
+            insertReport(report);
+        }
+
     }
 }

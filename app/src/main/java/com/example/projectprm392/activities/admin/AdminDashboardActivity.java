@@ -42,6 +42,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
         initViews();
         setupToolbar();
         setupListeners();
+        
+        // Auto initialize sample data if needed
+        autoInitializeSampleData();
+        
         loadStatistics();
     }
 
@@ -117,7 +121,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
             // startActivity(intent);
         });
 
-        btnRefreshStats.setOnClickListener(v -> loadStatistics());
+        btnRefreshStats.setOnClickListener(v -> {
+            loadStatistics();
+            Toast.makeText(this, "Đã cập nhật thống kê", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void loadStatistics() {
@@ -134,10 +141,41 @@ public class AdminDashboardActivity extends AppCompatActivity {
             tvTotalReports.setText(String.valueOf(totalReports));
             tvTotalApplications.setText(String.valueOf(totalApplications));
 
-            Toast.makeText(this, "Đã cập nhật thống kê", Toast.LENGTH_SHORT).show();
+            // Only show toast when manually refreshed
+            // Toast.makeText(this, "Đã cập nhật thống kê", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, "Lỗi tải thống kê: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void autoInitializeSampleData() {
+        executorService.execute(() -> {
+            try {
+                // Kiểm tra xem đã có dữ liệu chưa
+                int totalUsers = databaseHelper.getAllUsers().size();
+                int totalJobs = databaseHelper.getAllJobs().size();
+                int totalApplications = databaseHelper.getAllApplications().size();
+                int totalReports = databaseHelper.getAllReports().size();
+                
+                // Nếu chưa có dữ liệu hoặc có ít dữ liệu thì tự động tạo
+                if (totalUsers <= 1 || totalJobs == 0 || totalApplications == 0 || totalReports == 0) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "🔄 Đang tự động tạo dữ liệu mẫu...", Toast.LENGTH_SHORT).show();
+                    });
+                    
+                    // Tự động reset và tạo dữ liệu mẫu
+                    databaseHelper.resetAndInitializeSampleData();
+                    
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "✅ Đã tạo dữ liệu mẫu thành công!", Toast.LENGTH_LONG).show();
+                    });
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "⚠️ Lỗi tạo dữ liệu tự động: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     @Override

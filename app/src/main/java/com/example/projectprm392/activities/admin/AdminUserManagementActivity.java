@@ -209,16 +209,17 @@ public class AdminUserManagementActivity extends AppCompatActivity implements Us
     }
 
     private void showFilterDialog() {
-        String[] roles = {"Tất cả", "Quản trị viên", "Nhà tuyển dụng", "Người lao động"};
-        String[] roleValues = {"ALL", "ADMIN", "EMPLOYER", "WORKER"};
+        String[] filterOptions = {"Tất cả", "Nhà tuyển dụng", "Người lao động", "Tài khoản đã khóa", "Tài khoản chưa xác thực"};
+        String[] filterValues = {"ALL", "EMPLOYER", "WORKER", "LOCKED", "UNVERIFIED"};
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Lọc theo vai trò");
-        builder.setSingleChoiceItems(roles, getCurrentFilterIndex(), (dialog, which) -> {
-            currentFilter = roleValues[which];
+        builder.setTitle("Lọc người dùng");
+        builder.setSingleChoiceItems(filterOptions, getCurrentFilterIndex(), (dialog, which) -> {
+            currentFilter = filterValues[which];
             adapter.filterByRole(currentFilter);
             updateCounts();
             updateEmptyState();
+            btnFilter.setText(filterOptions[which]);
             dialog.dismiss();
         });
         builder.setNegativeButton("Hủy", null);
@@ -227,9 +228,10 @@ public class AdminUserManagementActivity extends AppCompatActivity implements Us
 
     private int getCurrentFilterIndex() {
         switch (currentFilter) {
-            case "ADMIN": return 1;
-            case "EMPLOYER": return 2;
-            case "WORKER": return 3;
+            case "EMPLOYER": return 1;
+            case "WORKER": return 2;
+            case "LOCKED": return 3;
+            case "UNVERIFIED": return 4;
             default: return 0;
         }
     }
