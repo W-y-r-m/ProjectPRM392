@@ -6,15 +6,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
 
-
 @Database(entities = { UserEntity.class, JobEntity.class, ApplicationEntity.class, PostHistoryEntity.class,
-        ReportEntity.class, ChatEntity.class }, version = 10, exportSchema = false)
+        ReportEntity.class, ChatEntity.class, ReviewEntity.class }, version = 13, exportSchema = false)
 @TypeConverters({ Converters.class })
 
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
-    public abstract JobDao jobDao();    
+    public abstract JobDao jobDao();
 
     public abstract ApplicationDao applicationDao();
 
@@ -23,6 +22,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ReportDao reportDao();
 
     public abstract ChatDao chatDao();
+
+    public abstract ReviewDao reviewDao();
 
     private static volatile AppDatabase INSTANCE;
 
