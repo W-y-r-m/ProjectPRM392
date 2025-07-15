@@ -341,7 +341,7 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
             return;
         }
 
-        // Check post quota
+        // Check post quota (logic: quota tăng dần từ 0, tối đa 20 tin miễn phí)
         if (currentUser.getPostQuota() >= 20) {
             showQuotaExceededDialog();
             return;
@@ -353,6 +353,12 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
 
     private void createJobSeekingPost(UserEntity user, String title, String description, int neededAmount) {
         try {
+            android.util.Log.d("CreateJobSeeking", "=== CREATING JOB SEEKING POST ===");
+            android.util.Log.d("CreateJobSeeking", "User ID: " + user.getId());
+            android.util.Log.d("CreateJobSeeking", "Title: " + title);
+            android.util.Log.d("CreateJobSeeking", "Description: " + description);
+            android.util.Log.d("CreateJobSeeking", "Location: " + selectedLocationName);
+            
             JobEntity jobEntity = new JobEntity();
             jobEntity.setJobId(UUID.randomUUID().toString());
             jobEntity.setUserId(user.getId());
@@ -371,20 +377,28 @@ public class CreateJobSeekingActivity extends AppCompatActivity {
             jobEntity.setCreatedAt(new Date());
             jobEntity.setIsActive(true);
 
+            android.util.Log.d("CreateJobSeeking", "Generated Job ID: " + jobEntity.getJobId());
+            android.util.Log.d("CreateJobSeeking", "Job Active: " + jobEntity.getIsActive());
+
             // Insert job
             boolean success = databaseHelper.insertJob(jobEntity);
 
             if (success) {
-                // Update user's post quota - tăng 1 khi đăng tin (logic ban đầu)
+                // Update user's post quota - tăng 1 khi đăng tin thành công
                 user.setPostQuota(user.getPostQuota() + 1);
-                databaseHelper.updateUser(databaseHelper.convertEntityToUser(user));
+                boolean userUpdated = databaseHelper.updateUser(databaseHelper.convertEntityToUser(user));
+                
+                android.util.Log.d("CreateJobSeeking", "Job created successfully: " + jobEntity.getJobId());
+                android.util.Log.d("CreateJobSeeking", "Updated user quota: " + user.getPostQuota() + ", update result: " + userUpdated);
 
                 showSuccess();
             } else {
+                android.util.Log.e("CreateJobSeeking", "Failed to insert job into database");
                 showError("Không thể tạo bài đăng");
             }
 
         } catch (Exception e) {
+            android.util.Log.e("CreateJobSeeking", "Exception creating job seeking post", e);
             showError("Lỗi khi tạo bài đăng: " + e.getMessage());
         }
     }

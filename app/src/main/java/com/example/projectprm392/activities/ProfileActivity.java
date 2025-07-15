@@ -14,10 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -41,14 +43,27 @@ import java.util.Locale;
 public class ProfileActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int REQUEST_MAP_LOCATION = 1002;
+    private static final String TAG = "ProfileActivity";
     
     private EditText etFullName, etPhoneNumber, etDescription;
     private EditText etEmail, etPostQuota;
     private Spinner spGender;
-    private Button btnSave, btnCancel, btnCurrentLocation;
+    private Button btnSave, btnCancel;
     private ImageView ivBack;
     private GoogleMap mMap;
+    
+    // Location selection views
+    private CardView cardCurrentLocation;
+    private CardView cardManualLocation;
+    private CardView cardSelectedLocation;
+    private TextView txtSelectedLocation;
+    private TextView txtCurrentAddress;
+    
     private LatLng selectedLocation;
+    private String selectedLocationName = "";
+    private String selectedAddress = "";
+    private boolean isLocationSelected = false;
     
     private SessionManager sessionManager;
     private UserController userController;
@@ -77,8 +92,14 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
         spGender = findViewById(R.id.spGender);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
-        btnCurrentLocation = findViewById(R.id.btnCurrentLocation);
         ivBack = findViewById(R.id.ivBack);
+        
+        // Location selection views
+        cardCurrentLocation = findViewById(R.id.cardCurrentLocation);
+        cardManualLocation = findViewById(R.id.cardManualLocation);
+        cardSelectedLocation = findViewById(R.id.cardSelectedLocation);
+        txtSelectedLocation = findViewById(R.id.txtSelectedLocation);
+        txtCurrentAddress = findViewById(R.id.txtCurrentAddress);
     }
 
     private void setupController() {
@@ -99,9 +120,16 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
         
         btnCancel.setOnClickListener(v -> finish());
         
-        btnSave.setOnClickListener(v -> saveProfile());
+        // Location selection listeners
+        if (cardCurrentLocation != null) {
+            cardCurrentLocation.setOnClickListener(v -> selectCurrentLocation());
+        }
         
-        btnCurrentLocation.setOnClickListener(v -> getCurrentLocation());
+        if (cardManualLocation != null) {
+            cardManualLocation.setOnClickListener(v -> selectManualLocation());
+        }
+        
+        btnSave.setOnClickListener(v -> saveProfile());
     }
 
     private void loadUserData() {
@@ -137,12 +165,25 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
             spGender.setSelection(user.getGender() ? 0 : 1); // 0 = Nam, 1 = Nữ
         }
         
-        // Set location on map
+        // Set location on map and display current address
         if (user.getCurrentLatitude() != null && user.getCurrentLongitude() != null) {
             selectedLocation = new LatLng(user.getCurrentLatitude(), user.getCurrentLongitude());
+            selectedAddress = user.getAddress() != null ? user.getAddress() : ""; // Load existing address
+            
             if (mMap != null) {
                 updateMapLocation();
             }
+            
+            // If we have stored address, use it, otherwise geocode
+            if (selectedAddress != null && !selectedAddress.isEmpty()) {
+                txtCurrentAddress.setText(selectedAddress);
+            } else {
+                // Load and display current address
+                loadCurrentAddress(selectedLocation);
+            }
+        } else {
+            txtCurrentAddress.setText("Chưa có địa chỉ");
+            selectedAddress = "";
         }
         
         // Make non-editable fields readonly
@@ -210,17 +251,126 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
                 });
     }
 
-    private void getAddressFromLocation(LatLng latLng) {
+    private void selectCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, 
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 
+                    LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        selectedLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        isLocationSelected = true;
+                        
+                        // Get address from coordinates
+                        getAddressFromLocation(selectedLocation);
+                        
+                        // Update UI
+                        updateLocationUI();
+                        Toast.makeText(this, "Đã chọn vị trí hiện tại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Không thể lấy vị trí hiện tại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi lấy vị trí: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void selectManualLocation() {
+        Intent intent = new Intent(this, com.example.projectprm392.activities.MapLocationPickerActivity.class);
+        startActivityForResult(intent, REQUEST_MAP_LOCATION);
+    }
+    
+    private void getAddressFromLocation(LatLng location) {
         try {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            if (!addresses.isEmpty()) {
+            List<Address> addresses = geocoder.getFromLocation(
+                location.latitude, location.longitude, 1);
+            
+            if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String addressText = address.getAddressLine(0);
-                Toast.makeText(this, "Địa chỉ: " + addressText, Toast.LENGTH_LONG).show();
+                selectedLocationName = address.getAddressLine(0);
+                selectedAddress = selectedLocationName; // Store the address
+                
+                // Update UI to show selected location
+                cardSelectedLocation.setVisibility(View.VISIBLE);
+                txtSelectedLocation.setText(selectedLocationName);
+                
+                // Also update current address display
+                txtCurrentAddress.setText(selectedLocationName);
+            } else {
+                selectedLocationName = "Vị trí đã chọn";
+                selectedAddress = "";
+                cardSelectedLocation.setVisibility(View.VISIBLE);
+                txtSelectedLocation.setText(selectedLocationName);
+                txtCurrentAddress.setText(selectedLocationName);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            selectedLocationName = "Vị trí đã chọn";
+            cardSelectedLocation.setVisibility(View.VISIBLE);
+            txtSelectedLocation.setText(selectedLocationName);
+            txtCurrentAddress.setText(selectedLocationName);
+        }
+    }
+    
+    private void updateLocationUI() {
+        if (cardSelectedLocation != null && txtSelectedLocation != null) {
+            cardSelectedLocation.setVisibility(View.VISIBLE);
+            txtSelectedLocation.setText(selectedLocationName);
+        }
+    }
+
+    private void loadCurrentAddress(LatLng location) {
+        if (location == null) {
+            txtCurrentAddress.setText("Chưa có địa chỉ");
+            return;
+        }
+        
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(
+                location.latitude, location.longitude, 1);
+            
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressText = address.getAddressLine(0);
+                txtCurrentAddress.setText(addressText);
+                selectedAddress = addressText; // Store the address
+            } else {
+                txtCurrentAddress.setText("Không thể xác định địa chỉ");
+                selectedAddress = "";
+            }
+        } catch (IOException e) {
+            txtCurrentAddress.setText("Lỗi lấy địa chỉ");
+            android.util.Log.e("ProfileActivity", "Error loading address: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == REQUEST_MAP_LOCATION && resultCode == RESULT_OK && data != null) {
+            double latitude = data.getDoubleExtra("latitude", 0);
+            double longitude = data.getDoubleExtra("longitude", 0);
+            
+            if (latitude != 0 && longitude != 0) {
+                selectedLocation = new LatLng(latitude, longitude);
+                getAddressFromLocation(selectedLocation);
+                Log.d(TAG, "Selected location from map: " + latitude + ", " + longitude);
+                
+                // Update UI
+                updateLocationUI();
+                isLocationSelected = true;
+                Toast.makeText(this, "Đã chọn vị trí trên bản đồ", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Vị trí chọn không hợp lệ", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -252,8 +402,14 @@ public class ProfileActivity extends AppCompatActivity implements OnMapReadyCall
         currentUser.setGender(spGender.getSelectedItemPosition() == 0); // 0 = Nam, 1 = Nữ
         
         if (selectedLocation != null) {
+            android.util.Log.d("ProfileActivity", "SAVING USER LOCATION:");
+            android.util.Log.d("ProfileActivity", "Latitude: " + selectedLocation.latitude);
+            android.util.Log.d("ProfileActivity", "Longitude: " + selectedLocation.longitude);
+            android.util.Log.d("ProfileActivity", "Address: " + selectedAddress);
+            
             currentUser.setCurrentLatitude(selectedLocation.latitude);
             currentUser.setCurrentLongitude(selectedLocation.longitude);
+            currentUser.setAddress(selectedAddress); // Save the address text
         }
 
         // Save to database

@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!-- PayOS API domain configuration with enhanced support -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">api-merchant.payos.vn</domain>
+        <domain includeSubdomains="true">payos.vn</domain>
+        <domain includeSubdomains="true">dev-merchant.payos.vn</domain>
+        <domain includeSubdomains="true">sandbox.payos.vn</domain>
+        <domain includeSubdomains="true">cdn.payos.vn</domain>
+        <domain includeSubdomains="true">static.payos.vn</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </domain-config>
+    
+    <!-- Gmail SMTP config -->
     <domain-config cleartextTrafficPermitted="false">
         <domain includeSubdomains="true">smtp.gmail.com</domain>
         <trust-anchors>
-            <!-- Trust the system default CAs -->
             <certificates src="system"/>
         </trust-anchors>
     </domain-config>
     
-    <!-- Allow cleartext traffic for development and API calls -->
+    <!-- Debug configuration for development -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </debug-overrides>
+    
+    <!-- Base config for other domains -->
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system"/>
