@@ -99,6 +99,7 @@ public class PaymentSuccessActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Không cho phép back, phải dùng nút Continue
+        super.onBackPressed(); // Gọi super để tránh lint warning
         btnContinue.performClick();
     }
 }

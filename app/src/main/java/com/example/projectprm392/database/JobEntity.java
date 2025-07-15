@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -74,6 +75,7 @@ public class JobEntity {
     // Constructors
     public JobEntity() {}
 
+    @Ignore
     public JobEntity(String jobId, int userId, String title, String description, 
                     String salary, String location, String jobType, String experienceLevel,
                     int neededAmount, String workingTime, Date startDate, Date endDate,

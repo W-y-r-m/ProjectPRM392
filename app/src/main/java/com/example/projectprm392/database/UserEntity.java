@@ -3,6 +3,7 @@ package com.example.projectprm392.database;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 
 import java.util.Date;
 
@@ -68,6 +69,7 @@ public class UserEntity {
     // Constructors
     public UserEntity() {}
 
+    @Ignore
     public UserEntity(String userId, String email, String password, String fullName, 
                      String phoneNumber, Boolean gender, String role, String levelOfViolation, String description, 
                      Integer postQuota, Double currentLatitude, Double currentLongitude, String address,
